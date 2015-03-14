@@ -43,6 +43,8 @@ public class BotStarter implements Bot
 		 * regiune are un numar minim de copii
 		 */
 		
+		// NUMAR MINIM DE WASTELANDS
+		
 		// Inainte de toate am nevoie sa stiu cate wastelanduri are fiecare super-regiune
 		setSuperRegionsWastelands(state);
 		
@@ -64,10 +66,28 @@ public class BotStarter implements Bot
 				minNumberOfWastelands = region.getSuperRegion().getNumberOfWastelands();
 			}
 			// Daca au acelasi minim decat o adaug in lista
-			if(region.getSuperRegion().getNumberOfWastelands() == minNumberOfWastelands) {
+			else if(region.getSuperRegion().getNumberOfWastelands() == minNumberOfWastelands) {
 				minRegions.add(region);
 			} 			
 		}
+		
+		// NUMAR MAXIM DE BONUS
+		ArrayList<Region> optimalRegions = new ArrayList<>();
+		int maxBonus = Integer.MIN_VALUE;
+		
+		for(Region region : minRegions) {
+			if(region.getSuperRegion().getArmiesReward() > maxBonus) {
+				optimalRegions.clear();
+				optimalRegions.add(region);
+				// noul maxim
+				maxBonus = region.getSuperRegion().getArmiesReward();				
+			}
+			else if(region.getSuperRegion().getArmiesReward() == maxBonus) {
+				optimalRegions.add(region);
+			}
+		}		
+		
+		// NUMAR MINIM DE COPII
 		
 		// Iar acum aici am o lista cu super-regiunile regiunilor posibila cu numarul
 		// minim de wastlanduri
@@ -75,7 +95,7 @@ public class BotStarter implements Bot
 		int minChildRegions = Integer.MAX_VALUE;
 		
 		// Parcurg fiecare regiune din lista cu regiuni posibile de start
-		for(Region region : minRegions) {
+		for(Region region : optimalRegions) {
 			// Daca regiunea face parte dintr-o superregiune cu un 
 			// numar mai mic de copii decat am presupus, o aleg				
 			if(region.getSuperRegion().getSubRegions().size() < minChildRegions) {
