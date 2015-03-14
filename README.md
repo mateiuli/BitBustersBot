@@ -11,9 +11,6 @@ Mina de aur (wiki): https://www.warlight.net/wiki/Advanced_Strategy
 
 # Ideile noastre pana acum:
 
-# 1. Regiunea de start:
--> Alegem regiunea de start ca fiind regiunea regiunea care face parte din superregiunea cu numarul minim de regiuni copil. De ce? Se cucereste mai repede si luam bonusul mai repede -> marim armata mai repede
-
 ## 1. Regiunea de start:
 -> Alegem regiunea de start ca fiind regiunea care face parte din superregiunea cu numarul minim de regiuni copil. De ce? Se cucereste mai repede si luam bonusul mai repede -> marim armata mai repede
 
