@@ -28,97 +28,20 @@ import map.SuperRegion;
 import move.AttackTransferMove;
 import move.Move;
 import move.PlaceArmiesMove;
+import strategy.*;
 
 public class BotStarter implements Bot 
-{
+{	
 	@Override
 	/**
 	 * A method that returns which region the bot would like to start on, the pickable regions are stored in the BotState.
 	 * The bots are asked in turn (ABBAABBAAB) where they would like to start and return a single region each time they are asked.
 	 * This method returns one random region from the given pickable regions.
 	 */
-	public Region getStartingRegion(BotState state, Long timeOut)
-	{
-		/**
-		 * Regiunea de start este aleasa ca acea regiune a carei super 
-		 * regiune are un numar minim de copii
-		 */
-		
-		// NUMAR MINIM DE WASTELANDS
-		
-		// Inainte de toate am nevoie sa stiu cate wastelanduri are fiecare super-regiune
-		setSuperRegionsWastelands(state);
-		
-		// Super-regiunile cu numarul minim de wastelanduri 
-		ArrayList<SuperRegion> minSuperRegions = new ArrayList<>();
-		
-		// Numarul minim de wastelanduri
-		int minNumberOfWastelands = Integer.MAX_VALUE;
-		
-		// Lista cu regiunile din care fac parte posibilele regiuni de start
-		ArrayList<Region> minRegions = new ArrayList<>();
-			
-		for(Region region : state.getPickableStartingRegions()) {
-			// Daca s-a gasit un minim nou, sterg lista si adaug 
-			if(region.getSuperRegion().getNumberOfWastelands() < minNumberOfWastelands) {
-				minRegions.clear();
-				minRegions.add(region);
-				// noul minim
-				minNumberOfWastelands = region.getSuperRegion().getNumberOfWastelands();
-			}
-			// Daca au acelasi minim decat o adaug in lista
-			else if(region.getSuperRegion().getNumberOfWastelands() == minNumberOfWastelands) {
-				minRegions.add(region);
-			} 			
-		}
-		
-		// NUMAR MAXIM DE BONUS
-		ArrayList<Region> optimalRegions = new ArrayList<>();
-		int maxBonus = Integer.MIN_VALUE;
-		
-		for(Region region : minRegions) {
-			if(region.getSuperRegion().getArmiesReward() > maxBonus) {
-				optimalRegions.clear();
-				optimalRegions.add(region);
-				// noul maxim
-				maxBonus = region.getSuperRegion().getArmiesReward();				
-			}
-			else if(region.getSuperRegion().getArmiesReward() == maxBonus) {
-				optimalRegions.add(region);
-			}
-		}		
-		
-		// NUMAR MINIM DE COPII
-		
-		// Iar acum aici am o lista cu super-regiunile regiunilor posibila cu numarul
-		// minim de wastlanduri
-		Region startingRegion = null;
-		int minChildRegions = Integer.MAX_VALUE;
-		
-		// Parcurg fiecare regiune din lista cu regiuni posibile de start
-		for(Region region : optimalRegions) {
-			// Daca regiunea face parte dintr-o superregiune cu un 
-			// numar mai mic de copii decat am presupus, o aleg				
-			if(region.getSuperRegion().getSubRegions().size() < minChildRegions) {
-				minChildRegions = region.getSuperRegion().getSubRegions().size();
-				startingRegion = region;
-			}
-		}
-		
-		return startingRegion;
+	public Region getStartingRegion(BotState state, Long timeOut) {
+		return (new StartingRegionPicker(state)).getStartingRegion();
 	}
 	
-	/**
-	 * Seteaza pentru fiecare super-regiune numarul de wasteland-uri din ea
-	 * @param state
-	 */
-	public void setSuperRegionsWastelands(BotState state)
-	{
-		for(Region wasteland : state.getWasteLands()) {
-			wasteland.getSuperRegion().incrementNumberOfWastelands();
-		}
-	}
-
 	@Override
 	/**
 	 * This method is called for at first part of each round. This example puts two armies on random regions

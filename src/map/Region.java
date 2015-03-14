@@ -147,7 +147,10 @@ public class Region {
 		
 		for(Region region : neighbors) {
 			if(region.ownedByPlayer(playerName))
+				borderRegions.add(region);
 		}
+		
+		return borderRegions;
 	}
 	
 
