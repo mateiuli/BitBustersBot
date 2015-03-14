@@ -16,12 +16,40 @@ public class SuperRegion {
 	private int id;
 	private int armiesReward;
 	private LinkedList<Region> subRegions;
+	private int numberOfWastelands;
 	
 	public SuperRegion(int id, int armiesReward)
 	{
 		this.id = id;
 		this.armiesReward = armiesReward;
+		this.numberOfWastelands = 0;
 		subRegions = new LinkedList<Region>();
+	}
+	
+	/**
+	 * Verifica daca super regiunea are cel putin un wasteland
+	 * @return
+	 */
+	public boolean hasWastelands()
+	{
+		return numberOfWastelands > 0 ? true : false;
+	}
+	
+	/**
+	 * Incrementeaza numarul de wastelanduri ale super-regiunii 
+	 */
+	public void incrementNumberOfWastelands()
+	{
+		numberOfWastelands++;
+	}
+	
+	/**
+	 * Intoarce numarul de wastelanduri
+	 * @return
+	 */
+	public int getNumberOfWastelands()
+	{
+		return numberOfWastelands;
 	}
 	
 	public void addSubRegion(Region subRegion)
