@@ -10,7 +10,9 @@
 
 package map;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class Region {
@@ -20,6 +22,19 @@ public class Region {
 	private SuperRegion superRegion;
 	private int armies;
 	private String playerName;
+	// Tipul regiunii
+	private int regionType = 0;
+	
+	// Flaguri ce descriu regiunea curenta
+	//public final static int NEUTRAL = 1;
+	//public final static int ENEMY = 2;
+	public final static int MINE = 1;
+	
+	// Flaguri ce descriu regiunea curenta cu vecini cu tot
+	public final static int ENEMY_NEAR = 2;
+	public final static int NEUTRAL_NEAR = 4;
+	public final static int MINE_CENTRAL = 8; // asta ar insemna toate din jurul regiunii sunt ale mele
+		
 	
 	public Region(int id, SuperRegion superRegion)
 	{
@@ -122,5 +137,18 @@ public class Region {
 	public String getPlayerName() {
 			return playerName;
 	}
+	
+	public void setRegionType(int regionType) {
+		this.regionType = regionType;
+	}
+		
+	public List<Region> getBorderRegions(String playerName) {
+		List<Region> borderRegions = new ArrayList<>();
+		
+		for(Region region : neighbors) {
+			if(region.ownedByPlayer(playerName))
+		}
+	}
+	
 
 }

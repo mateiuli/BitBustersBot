@@ -1,0 +1,8 @@
+Task-uri
+
+1. Explorare harta
+	1.1. Extindere pe super-regiuni -> BONUS
+	1.2. Explorare super-regiuni adiacente -> super-regiuni cu bonusuri, 
+	de dimensiuni relativ mici
+
+2. 

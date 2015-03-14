@@ -42,5 +42,9 @@ public class Move {
 	public String getIllegalMove() {
 		return illegalMove;
 	}
+	
+	public String getString() {
+		return null;
+	}
 
 }

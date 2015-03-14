@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import map.Region;
 import map.SuperRegion;
 import move.AttackTransferMove;
+import move.Move;
 import move.PlaceArmiesMove;
 
 public class BotStarter implements Bot 
@@ -107,6 +108,10 @@ public class BotStarter implements Bot
 		return startingRegion;
 	}
 	
+	/**
+	 * Seteaza pentru fiecare super-regiune numarul de wasteland-uri din ea
+	 * @param state
+	 */
 	public void setSuperRegionsWastelands(BotState state)
 	{
 		for(Region wasteland : state.getWasteLands()) {
@@ -125,13 +130,42 @@ public class BotStarter implements Bot
 		
 		ArrayList<PlaceArmiesMove> placeArmiesMoves = new ArrayList<PlaceArmiesMove>();
 		String myName = state.getMyPlayerName();
-		int armies = 2;
+		//int armies = 2;
 		int armiesLeft = state.getStartingArmies();
 		LinkedList<Region> visibleRegions = state.getVisibleMap().getRegions();
 		
+				
+		/**
+		 * Eu aici cred asa. noi trebuie sa parcurgem lista cu regiuni. Vedem care sunt ale noastre (vizibile)
+		 * La fiecare regiune din asta, trebuie sa ii parcurgem vecinii (neighbours) si le marcam, le dam niste etichete ceva
+		 * de exemplu o marcam cu INAMIC_LANGA, sau NEUTRU_LANGA, sau daca sunt numia d-ale noastre langa, si tot asa :) (transfer armata)
+		 * Noi mai intai ar trebui sa facem o statistica, sa construim statistica asta, adica sa parcurgem regiunile si le marcam
+		 * Ca dupa, eventual pe cele neutre le bagam intr-o lista, pe cele cu inamici in alta, si pe cele ale noastre in alta
+		 * si dupa vedem, cati inamici sunt, cate neutre, si cate d-ale noastre
+		 * Da, exact :) camp la Region.java
+		 * Uite. Uitativa ca nu stium cum se scrie U-i-t-a-t-v-a. detaliii.... :))
+		 * Le parcurgem o data, le marcam, si salvam si pointeri (referinte) in vectori ca sa nu mai cautam din nou sa vedem care e liber
+		 * 
+		 */	
+		
+		// Lista cu regiuni ce se afla pe granita		
+		ArrayList<Region> borderRegions = new ArrayList<>();
+		
+		// Lista cu regiuni centrale
+		ArrayList<Region> centralRegions = new ArrayList<>();
+		
+		// care ziceai ca e al 3-lea?
+		ArrayList<Region> nearEnemies = new ArrayList<>();
+		
+		for(Region region : state.getVisibleMap().getRegions()) {
+			
+		}
+		
+		// Acum aici am lista cu regiuni de pe margine
+		
 		while(armiesLeft > 0)
 		{
-			double rand = Math.random();
+			/*double rand = Math.random();
 			int r = (int) (rand*visibleRegions.size());
 			Region region = visibleRegions.get(r);
 			
@@ -139,7 +173,8 @@ public class BotStarter implements Bot
 			{
 				placeArmiesMoves.add(new PlaceArmiesMove(myName, region, armies));
 				armiesLeft -= armies;
-			}
+			}*/
+		
 		}
 		
 		return placeArmiesMoves;
