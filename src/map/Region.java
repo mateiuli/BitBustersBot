@@ -17,25 +17,24 @@ import java.util.List;
 
 public class Region {
 	
+	// ID-ul unic al regiunii
 	private int id;
+	
+	// Vecinii regiunii
 	private LinkedList<Region> neighbors;
+	
+	// Super-regiunea din care face parte regiunea
 	private SuperRegion superRegion;
+	
+	// Numarul de armate de pe regiune
 	private int armies;
+	
+	// Numele player-ului ce detine regiunea
 	private String playerName;
-	// Tipul regiunii
-	private int regionType = 0;
 	
-	// Flaguri ce descriu regiunea curenta
-	//public final static int NEUTRAL = 1;
-	//public final static int ENEMY = 2;
-	public final static int MINE = 1;
-	
-	// Flaguri ce descriu regiunea curenta cu vecini cu tot
-	public final static int ENEMY_NEAR = 2;
-	public final static int NEUTRAL_NEAR = 4;
-	public final static int MINE_CENTRAL = 8; // asta ar insemna toate din jurul regiunii sunt ale mele
-		
-	
+	// Lista cu inamici din jur
+	private List<Region> enemiesAround;
+			
 	public Region(int id, SuperRegion superRegion)
 	{
 		this.id = id;
@@ -43,6 +42,7 @@ public class Region {
 		this.neighbors = new LinkedList<Region>();
 		this.playerName = "unknown";
 		this.armies = 0;
+		this.enemiesAround = null;
 		
 		superRegion.addSubRegion(this);
 	}
@@ -138,20 +138,58 @@ public class Region {
 			return playerName;
 	}
 	
-	public void setRegionType(int regionType) {
-		this.regionType = regionType;
-	}
-		
-	public List<Region> getBorderRegions(String playerName) {
-		List<Region> borderRegions = new ArrayList<>();
-		
-		for(Region region : neighbors) {
-			if(region.ownedByPlayer(playerName))
-				borderRegions.add(region);
-		}
-		
-		return borderRegions;
+	/**
+	 * 
+	 * @return True if this region is not owned by anyone
+	 */
+	public boolean isNeutral() {
+		return ownedByPlayer("unknown");
 	}
 	
+	/**
+	 * Verifica daca regiunea se afla pe frontiera
+	 * @param playerName Jucatorul care ar trebui sa o detina
+	 * @return
+	 */
+	public boolean isOnBorder(String playerName) {
+		for(Region neighbor : neighbors)
+			if(!neighbor.ownedByPlayer(playerName))
+				return true;
+		
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @param playeName
+	 * @return Lista cu inamici vecini
+	 */
+	public List<Region> getEnemiesAround(String playerName) {
+		//if(enemiesAround != null)
+		//	return enemiesAround;
+		
+		List<Region> enemiesAround = new ArrayList<>();
+		
+		for(Region neighbor : neighbors) {
+			if(!neighbor.ownedByPlayer(playerName) && !neighbor.isNeutral())
+				enemiesAround.add(neighbor);
+		}
+		
+		return enemiesAround; 
+	}
+	
+	/**
+	 * 
+	 * @param playerName
+	 * @return True daca regiunea se invecineaza cu inamici, fals daca nu
+	 */
+	public boolean hasEnemiesAround(String playerName) {
+		for(Region neighbor : neighbors)
+			if(!neighbor.ownedByPlayer(playerName) && !neighbor.isNeutral())
+				return true;
+		
+		return false;
+	}
+				
 
 }

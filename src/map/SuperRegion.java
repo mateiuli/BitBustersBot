@@ -73,6 +73,19 @@ public class SuperRegion {
 	}
 	
 	/**
+	 * 
+	 * @param playerName
+	 * @return True daca playerName detin intreaga super-regiune, false daca nu
+	 */
+	public boolean ownedByPlayer(String playerName) {
+		for(Region region : subRegions)
+			if(!region.ownedByPlayer(playerName))
+				return false;
+		
+		return true;
+	}
+	
+	/**
 	 * @return The id of this SuperRegion
 	 */
 	public int getId() {

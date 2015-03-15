@@ -175,6 +175,7 @@ public class BotState {
 				
 				region.setPlayerName(playerName);
 				region.setArmies(armies);
+				// region.clearEnemiesList();
 				i += 2;
 			}
 			catch(Exception e) {
