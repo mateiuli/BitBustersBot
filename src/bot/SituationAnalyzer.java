@@ -9,7 +9,7 @@ import map.SuperRegion;
 
 /**
  * This tool analyzes the current map and builds information
- * that is used later on the pipeline by the moves creator 
+ * that is used later on the pipeline by the upcoming moves creator 
  * @author iulian
  *
  */
@@ -84,7 +84,7 @@ public class SituationAnalyzer {
 	 * @param state Starea curenta a jocului
 	 * @return Lista cu super-regiunile ocupate de mine
 	 */
-	public static List<SuperRegion> getMySupeRegions(BotState state) {
+	public static List<SuperRegion> getMySuperRegions(BotState state) {
 		List<SuperRegion> mySuperRegions = new ArrayList<>();
 		
 		for(SuperRegion superRegion : state.getVisibleMap().getSuperRegions())
