@@ -33,6 +33,21 @@ public class SituationAnalyzer {
 	
 	/**
 	 * 
+	 * @param state Starea curenta a jocului
+	 * @return Lista cu teritoriile vizibile ale inamicului
+	 */
+	public static List<Region> getEnemyRegions(BotState state) {
+		List<Region> enemyRegions = new ArrayList<>();
+		
+		for(Region region : state.getVisibleMap().regions)
+			if(!region.ownedByPlayer(state.getMyPlayerName()) && !region.isNeutral())
+				enemyRegions.add(region);
+		
+		return enemyRegions;
+	}
+	
+	/**
+	 * 
 	 * @return Lista cu regiunile mele ce se afla pe frontiera
 	 * <br /> indiferent de ce vecini are, enemy sau neutral
 	 */
