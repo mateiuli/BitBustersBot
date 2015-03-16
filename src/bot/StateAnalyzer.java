@@ -58,6 +58,7 @@ public class StateAnalyzer {
 		computeMyBorderRegions();
 		computeMyBorderRegionsWithEnemy();
 		computeMyBorderRegionsWithNeutrals();		
+		computeMySuperRegions();
 	}
 	
 	/**
