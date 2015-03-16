@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import bot.BotState;
+
 
 public class Region {
 	
@@ -34,7 +36,7 @@ public class Region {
 	
 	// Lista cu inamici din jur
 	private List<Region> enemiesAround;
-			
+
 	public Region(int id, SuperRegion superRegion)
 	{
 		this.id = id;
@@ -151,7 +153,7 @@ public class Region {
 	 * @param playerName Jucatorul care ar trebui sa o detina
 	 * @return
 	 */
-	public boolean isOnBorder(String playerName) {
+	public boolean isOnBorder(BotState state) {
 		for(Region neighbor : neighbors)
 			if(!neighbor.ownedByPlayer(playerName))
 				return true;
@@ -183,13 +185,29 @@ public class Region {
 	 * @param playerName
 	 * @return True daca regiunea se invecineaza cu inamici, fals daca nu
 	 */
-	public boolean hasEnemiesAround(String playerName) {
+	public boolean hasEnemiesAround(BotState state) {
 		for(Region neighbor : neighbors)
-			if(!neighbor.ownedByPlayer(playerName) && !neighbor.isNeutral())
+			if(neighbor.ownedByPlayer(state.getOpponentPlayerName()))
 				return true;
 		
 		return false;
 	}
-				
+	
+	
+	public String getDebugInfo(BotState state) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("ID: " + id + ", SuperRegion ID: " + superRegion.getId() + "\n");
+		sb.append("Owned by: " + playerName + "\nArmies: " + armies + "\n");
+		sb.append("Neighbors: ");
+		
+		for(Region n : neighbors) 
+			sb.append("Region " + n.getId() + ", ");
+		
+		sb.append("\nIs on border: " + (isOnBorder(state) ? "Yes" : "No") + "\n");
+		sb.append("Has enemies around: " + (hasEnemiesAround(state) ? "Yes" : "No") + "\n");
+		sb.append("Is neutral: " + (isNeutral() ? "Yes" : "No") + "\n");
+		
+		return sb.toString();
+	}		
 
 }

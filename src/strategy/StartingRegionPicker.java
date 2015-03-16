@@ -5,7 +5,6 @@ import java.util.List;
 
 import bot.BotState;
 import map.Region;
-import map.SuperRegion;
 
 public class StartingRegionPicker {
 	private BotState state;

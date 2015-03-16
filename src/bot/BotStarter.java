@@ -24,14 +24,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import map.Region;
-import map.SuperRegion;
 import move.AttackTransferMove;
-import move.Move;
 import move.PlaceArmiesMove;
 import strategy.*;
 
 public class BotStarter implements Bot 
 {	
+	
+	
 	@Override
 	/**
 	 * A method that returns which region the bot would like to start on, the pickable regions are stored in the BotState.
@@ -49,11 +49,10 @@ public class BotStarter implements Bot
 	 * @return The list of PlaceArmiesMoves for one round
 	 */
 	public ArrayList<PlaceArmiesMove> getPlaceArmiesMoves(BotState state, Long timeOut) 
-	{
-		
+	{			
 		ArrayList<PlaceArmiesMove> placeArmiesMoves = new ArrayList<PlaceArmiesMove>();
 		String myName = state.getMyPlayerName();
-		//int armies = 2;
+		int armies = 2;
 		int armiesLeft = state.getStartingArmies();
 		LinkedList<Region> visibleRegions = state.getVisibleMap().getRegions();
 		
@@ -71,24 +70,22 @@ public class BotStarter implements Bot
 		 * 
 		 */	
 		
-		// Lista cu regiuni ce se afla pe granita		
-		ArrayList<Region> borderRegions = new ArrayList<>();
-		
-		// Lista cu regiuni centrale
-		ArrayList<Region> centralRegions = new ArrayList<>();
-		
-		// care ziceai ca e al 3-lea?
-		ArrayList<Region> nearEnemies = new ArrayList<>();
-		
-		for(Region region : state.getVisibleMap().getRegions()) {
-			
-		}
-		
-		// Acum aici am lista cu regiuni de pe margine
+//		// Lista cu regiuni ce se afla pe granita		
+//		ArrayList<Region> borderRegions = new ArrayList<>();
+//		
+//		// Lista cu regiuni centrale
+//		ArrayList<Region> centralRegions = new ArrayList<>();
+//		
+//		// care ziceai ca e al 3-lea?
+//		ArrayList<Region> nearEnemies = new ArrayList<>();
+//		
+//		for(Region region : state.getVisibleMap().getRegions()) {
+//			
+//		}
 		
 		while(armiesLeft > 0)
 		{
-			/*double rand = Math.random();
+			double rand = Math.random();
 			int r = (int) (rand*visibleRegions.size());
 			Region region = visibleRegions.get(r);
 			
@@ -96,10 +93,11 @@ public class BotStarter implements Bot
 			{
 				placeArmiesMoves.add(new PlaceArmiesMove(myName, region, armies));
 				armiesLeft -= armies;
-			}*/
+			}
 		
 		}
 		
+		// debugPrint(state);		
 		return placeArmiesMoves;
 	}
 
@@ -147,8 +145,45 @@ public class BotStarter implements Bot
 				}
 			}
 		}
-		
+
+		// debugPrint(state);
 		return attackTransferMoves;
+	}
+	
+	/**
+	 * Functie de debug. Testeaza toate functiile de selectare regiuni
+	 * @param state
+	 */
+	public void debugPrint(BotState state) {
+		System.out.println("\n[DEBUG] getMyRegions(); \n");
+		for(Region r : state.getStateAnalyzer().getMyRegions()) {
+			System.out.println(r.getDebugInfo(state));
+		}
+		
+		System.out.println("\n[DEBUG] getEnemyRegions(); \n");
+		for(Region r : state.getStateAnalyzer().getEnemyRegions()) {
+			System.out.println(r.getDebugInfo(state));
+		}
+		
+		System.out.println("\n[DEBUG] getMyBorderRegions(); \n");
+		for(Region r : state.getStateAnalyzer().getMyBorderRegions()) {
+			System.out.println(r.getDebugInfo(state));
+		}
+		
+		System.out.println("\n[DEBUG] getMyCentralRegions(); \n");
+		for(Region r : state.getStateAnalyzer().getMyCentralRegions()) {
+			System.out.println(r.getDebugInfo(state));
+		}
+		
+		System.out.println("\n[DEBUG] getMyBorderRegionsWithEnemy(); \n");
+		for(Region r : state.getStateAnalyzer().getMyBorderRegionsWithEnemy()) {
+			System.out.println(r.getDebugInfo(state));
+		}
+		
+		System.out.println("\n[DEBUG] getMyBorderRegionsWithNeutrals(); \n");
+		for(Region r : state.getStateAnalyzer().getMyBorderRegionsWithNeutrals()) {
+			System.out.println(r.getDebugInfo(state));
+		}		
 	}
 
 	public static void main(String[] args)

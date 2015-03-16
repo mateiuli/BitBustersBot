@@ -22,23 +22,44 @@ import move.Move;
 
 public class BotState {
 	
+	// Numele meu de jucator
 	private String myName = "";
+	
+	// Numele de jucator al inamicului
 	private String opponentName = "";
 	
-	private final Map fullMap = new Map(); //This map is known from the start, contains all the regions and how they are connected, doesn't change after initialization
-	private Map visibleMap; //This map represents everything the player can see, updated at the end of each round.
+	// Harta completa ca structura
+	private final Map fullMap = new Map();
 	
-	private ArrayList<Region> pickableStartingRegions; //list of regions the player can choose the start from
-	private ArrayList<Region> wastelands; //wastelands, i.e. neutral regions with a larger amount of armies on them. Given before the picking of starting regions
+	// Harta ce vad eu
+	private Map visibleMap; 
 	
-	private ArrayList<Move> opponentMoves; //list of all the opponent's moves, reset at the end of each round
+	// Regiunile posibile de start
+	private ArrayList<Region> pickableStartingRegions; 
+	
+	// Regiunile nasoale - watelands
+	private ArrayList<Region> wastelands;
+	
+	// Miscarile inamicului de la sfarsitul rundei
+	private ArrayList<Move> opponentMoves;
 
-	private int startingArmies; //number of armies the player can place on map
+	// Numarul de armate pe care jucatorul pe poate plasa pe harta
+	private int startingArmies;
+	
+	// Numarul maxim de runde
 	private int maxRounds;
+	
+	// Runda curenta a jocului
 	private int roundNumber;
-
-	private long totalTimebank; //total time that can be in the timebank
-	private long timePerMove; //the amount of time that is added to the timebank per requested move
+	
+	// Timpul total ce poate fi in timebank
+	private long totalTimebank;
+	
+	// Timpul ce se adauga in timebank pe fiecare mutare
+	private long timePerMove; 
+	
+	// Analizator de situatie
+	private StateAnalyzer stateAnalyzer = null;
 	
 	public BotState()
 	{
@@ -73,7 +94,10 @@ public class BotState {
 		}
 	}
 	
-	//initial map is given to the bot with all the information except for player and armies info
+	/**
+	 * Initial map is given to the bot with all the information except for player and armies info
+	 * @param mapInput
+	 */
 	public void setupMap(String[] mapInput)
 	{
 		int i, regionId, superRegionId, wastelandId, reward;
@@ -144,7 +168,10 @@ public class BotState {
 		}
 	}
 	
-	//regions from wich a player is able to pick his preferred starting region
+	/**
+	 * regions from wich a player is able to pick his preferred starting region
+	 * @param input
+	 */
 	public void setPickableStartingRegions(String[] input)
 	{
 		pickableStartingRegions = new ArrayList<Region>();
@@ -162,7 +189,10 @@ public class BotState {
 		}
 	}
 	
-	//visible regions are given to the bot with player and armies info
+	/**
+	 * visible regions are given to the bot with player and armies info
+	 * @param mapInput
+	 */
 	public void updateMap(String[] mapInput)
 	{
 		visibleMap = fullMap.getMapCopy();
@@ -190,11 +220,17 @@ public class BotState {
 				unknownRegions.add(region);
 		
 		for(Region unknownRegion : unknownRegions)
-			visibleMap.getRegions().remove(unknownRegion);				
+			visibleMap.getRegions().remove(unknownRegion);
+		
+		// Reanalizeaza situatia curenta
+		stateAnalyzer = new StateAnalyzer(this);
 	}
 
-	//Parses a list of the opponent's moves every round. 
-	//Clears it at the start, so only the moves of this round are stored.
+	/**
+	 * Parses a list of the opponent's moves every round. 
+	 * Clears it at the start, so only the moves of this round are stored.
+	 * @param moveInput
+	 */
 	public void readOpponentMoves(String[] moveInput)
 	{
 		opponentMoves.clear();
@@ -268,6 +304,10 @@ public class BotState {
 
 	public ArrayList<Region> getWasteLands(){
 		return wastelands;
+	}
+	
+	public StateAnalyzer getStateAnalyzer() {
+		return stateAnalyzer;
 	}
 
 }
