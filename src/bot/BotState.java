@@ -184,10 +184,11 @@ public class BotState {
 		}
 		ArrayList<Region> unknownRegions = new ArrayList<Region>();
 		
-		//remove regions which are unknown.
+		// remove regions which are unknown.
 		for(Region region : visibleMap.regions)
 			if(region.getPlayerName().equals("unknown"))
 				unknownRegions.add(region);
+		
 		for(Region unknownRegion : unknownRegions)
 			visibleMap.getRegions().remove(unknownRegion);				
 	}

@@ -1,0 +1,72 @@
+package algorithm;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import map.*;
+
+public class DistanceCalculator {
+	
+	public static List<Region> getShortestPath(Region start, List<Region> destinations) {
+		List<Region> shortestPath = new LinkedList<>();
+		
+		// Initializare coada
+		LinkedList<Region> Q = new LinkedList<>();
+		
+		// Marcare regiuni vizitate
+		Map<Region, Boolean> visited = new HashMap<>();
+		
+		// Pentru reconstruire drum
+		// key:v -> value:u - means that node u was discovered
+		// coming from node v
+		Map<Region, Region> regionDiscovered = new HashMap<>();
+		
+		// Nodul de inceput
+		Q.push(start);
+		regionDiscovered.put(null, start);
+		
+		// Macare ca vizitat
+		visited.put(start, true);
+		
+		Region destinationRegion = null;
+		
+		while(!Q.isEmpty() && destinationRegion == null) {
+			// Regiune careia sa-i vizitez vecinii
+			Region region = Q.pop();
+			
+			for(Region neighbor : region.getNeighbors()) {
+				// Daca veciniul a fost vizitat, treci peste
+				if(visited.containsKey(neighbor))
+					continue;
+				
+				// Adauga vecinul in coada
+				Q.push(neighbor);
+				
+				// Marcare ca vizitat
+				visited.put(neighbor, true);	
+				
+				regionDiscovered.put(region, neighbor);
+				
+				// Ma opresc daca am gasit nod de destinatie
+				if(destinations.contains(neighbor)) {
+					destinationRegion = neighbor;
+					break;
+				}
+			}
+		}
+		
+		while(destinationRegion != null) {
+			
+			// problem: cant access by value
+			// what i need: get key by value
+			// destinationRegion = regionDiscovered.
+		}
+		
+		
+		// TO DO: Reconstruieste drumul
+		
+		return shortestPath;
+	}
+}

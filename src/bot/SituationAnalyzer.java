@@ -63,6 +63,22 @@ public class SituationAnalyzer {
 	
 	/**
 	 * 
+	 * @param state Starea curenta a jocului
+	 * @return Lista cu regiunile mele centrale - inconjurate
+	 * <br /> numai de regiuni tot de ale mele
+	 */
+	public static List<Region> getMyCentralRegions(BotState state) {
+		List<Region> myCentralRegions = new ArrayList<Region>();
+		
+		for(Region region : state.getVisibleMap().regions) 
+			if(!region.isOnBorder(state.getMyPlayerName()))
+				myCentralRegions.add(region);
+		
+		return myCentralRegions;
+	}
+	
+	/**
+	 * 
 	 * @return Lista cu regiunle ce se afla pe 
 	 * frontiera si se invecineaza cu inamici
 	 */
