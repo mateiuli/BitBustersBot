@@ -11,6 +11,8 @@
 package map;
 import java.util.LinkedList;
 
+import bot.BotState;
+
 public class SuperRegion {
 	
 	private int id;
@@ -78,11 +80,12 @@ public class SuperRegion {
 	 * @return True daca playerName detin intreaga super-regiune, false daca nu
 	 */
 	public boolean ownedByPlayer(String playerName) {
-		for(Region region : subRegions)
-			if(!region.ownedByPlayer(playerName))
-				return false;
+		String owner = ownedByPlayer();
 		
-		return true;
+		if(owner == null)
+			return false;
+		
+		return owner.equals(playerName);
 	}
 	
 	/**
@@ -105,4 +108,13 @@ public class SuperRegion {
 	public LinkedList<Region> getSubRegions() {
 		return subRegions;
 	}
+	
+	public String getDebugInfo(BotState state) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("ID: " + id + "\n");
+		sb.append("Armies reward: " + armiesReward + "\n");
+		sb.append("No of wastelands: " +  + "\n");
+		
+		return sb.toString();
+	}		
 }

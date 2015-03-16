@@ -37,6 +37,9 @@ public class StateAnalyzer {
 	// Lista cu regiunile mele de pe bordura ce se invecineaza numai cu zone neutre
 	private List<Region> myBorderRegionsWithNeutrals = null;
 	
+	// Lista cu super-regiunile ocupate complet de catre mine
+	private List<SuperRegion> mySuperRegions = null;
+	
 	public StateAnalyzer(BotState state) {
 		this.state = state;
 		analizeSituation();
@@ -123,6 +126,14 @@ public class StateAnalyzer {
 			if(!region.hasEnemiesAround(state))
 				myBorderRegionsWithNeutrals.add(region);
 	}
+	
+	private void computeMySuperRegions() {
+		mySuperRegions = new ArrayList<>();
+		
+		for(SuperRegion superRegion : state.getVisibleMap().getSuperRegions())
+			if(superRegion.ownedByPlayer(state.getMyPlayerName()))
+				mySuperRegions.add(superRegion);
+	}
 		
 	/**
 	 * 
@@ -202,16 +213,10 @@ public class StateAnalyzer {
 	 * @param state Starea curenta a jocului
 	 * @return Lista cu super-regiunile ocupate de mine
 	 */
-	public static List<SuperRegion> getMySuperRegions(BotState state) {
-		if(state.getVisibleMap() == null)
-			return null;
-		
-		List<SuperRegion> mySuperRegions = new ArrayList<>();
-		
-		for(SuperRegion superRegion : state.getVisibleMap().getSuperRegions())
-			if(superRegion.ownedByPlayer(state.getMyPlayerName()))
-				mySuperRegions.add(superRegion);
-				
+	public List<SuperRegion> getMySuperRegions() {
+		if(state.getVisibleMap() == null || mySuperRegions == null)
+			return new ArrayList<>();
+						
 		return mySuperRegions;
 	}
 	
@@ -221,7 +226,7 @@ public class StateAnalyzer {
 	 * @param superRegion Regiunea ce trebuie analizata
 	 * @return True daca toata super-regiunea e ocupata de mine, false daca nu
 	 */
-	public static boolean isSuperRegionMine(BotState state, SuperRegion superRegion) {
+	public boolean isSuperRegionMine(SuperRegion superRegion) {
 		for(Region region : superRegion.getSubRegions())
 			if(!region.ownedByPlayer(state.getMyPlayerName()))
 				return false;
@@ -238,7 +243,7 @@ public class StateAnalyzer {
 	 * <br /> <i>0.5f - Super-regiune ocupata 50%</i>
 	 * <br /> <i>1.0f - Super-regiune ocupata 100%</i>
 	 */
-	public static double getSuperRegionOccupationPercentage(BotState state, SuperRegion superRegion) {
+	public double getSuperRegionOccupationPercentage(SuperRegion superRegion) {
 		int superRegionSize = superRegion.getSubRegions().size();
 		int occupiedRegions = 0;
 		
