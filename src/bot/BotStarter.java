@@ -21,6 +21,8 @@ package bot;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,12 +35,11 @@ import strategy.*;
 public class BotStarter implements Bot 
 {	
 	
+	private ArrayList<AttackTransferMove>  attackTransferMoves = new ArrayList<>(); 
 	
 	@Override
 	/**
-	 * A method that returns which region the bot would like to start on, the pickable regions are stored in the BotState.
-	 * The bots are asked in turn (ABBAABBAAB) where they would like to start and return a single region each time they are asked.
-	 * This method returns one random region from the given pickable regions.
+	 * Alege regiunea de start
 	 */
 	public Region getStartingRegion(BotState state, Long timeOut) {
 		return (new StartingRegionPicker(state)).getStartingRegion();
@@ -51,55 +52,78 @@ public class BotStarter implements Bot
 	 * @return The list of PlaceArmiesMoves for one round
 	 */
 	public ArrayList<PlaceArmiesMove> getPlaceArmiesMoves(BotState state, Long timeOut) 
-	{			
+	{				
+		// Golesc lista cu mutarile anterioare - urmeaza miscari noi
+		attackTransferMoves.clear();
+		
 		ArrayList<PlaceArmiesMove> placeArmiesMoves = new ArrayList<PlaceArmiesMove>();
 		String myName = state.getMyPlayerName();
 		int armies = 2;
 		int armiesLeft = state.getStartingArmies();
-		LinkedList<Region> visibleRegions = state.getVisibleMap().getRegions();
-		
-				
-		/**
-		 * Eu aici cred asa. noi trebuie sa parcurgem lista cu regiuni. Vedem care sunt ale noastre (vizibile)
-		 * La fiecare regiune din asta, trebuie sa ii parcurgem vecinii (neighbours) si le marcam, le dam niste etichete ceva
-		 * de exemplu o marcam cu INAMIC_LANGA, sau NEUTRU_LANGA, sau daca sunt numia d-ale noastre langa, si tot asa :) (transfer armata)
-		 * Noi mai intai ar trebui sa facem o statistica, sa construim statistica asta, adica sa parcurgem regiunile si le marcam
-		 * Ca dupa, eventual pe cele neutre le bagam intr-o lista, pe cele cu inamici in alta, si pe cele ale noastre in alta
-		 * si dupa vedem, cati inamici sunt, cate neutre, si cate d-ale noastre
-		 * Da, exact :) camp la Region.java
-		 * Uite. Uitativa ca nu stium cum se scrie U-i-t-a-t-v-a. detaliii.... :))
-		 * Le parcurgem o data, le marcam, si salvam si pointeri (referinte) in vectori ca sa nu mai cautam din nou sa vedem care e liber
-		 * 
-		 */	
-		
-//		// Lista cu regiuni ce se afla pe granita		
-//		ArrayList<Region> borderRegions = new ArrayList<>();
-//		
-//		// Lista cu regiuni centrale
-//		ArrayList<Region> centralRegions = new ArrayList<>();
-//		
-//		// care ziceai ca e al 3-lea?
-//		ArrayList<Region> nearEnemies = new ArrayList<>();
-//		
-//		for(Region region : state.getVisibleMap().getRegions()) {
-//			
-//		}
-		
-		while(armiesLeft > 0)
-		{
-			double rand = Math.random();
-			int r = (int) (rand*visibleRegions.size());
-			Region region = visibleRegions.get(r);
+
+		for(Region centralRegion : state.getStateAnalyzer().getMyCentralRegions()) {
+			if(centralRegion.getArmies() < 2)
+				continue;
 			
-			if(region.ownedByPlayer(myName))
-			{
-				placeArmiesMoves.add(new PlaceArmiesMove(myName, region, armies));
-				armiesLeft -= armies;
-			}
-		
+			// Regiunea imediat urmatoare din drumul cel mai scurt catre o bordura
+			Region nextRegion = DistanceCalculator.nextRegionToBorder(centralRegion, state.getStateAnalyzer().getMyBorderRegions());
+			
+			// Adaugam miscarea de transfer
+			attackTransferMoves.add(new AttackTransferMove(myName, centralRegion, nextRegion, centralRegion.getArmies() - 1));
+			
+			if(nextRegion.isOnBorder(state)) {	
+				// Avertizeaza regiunea urmatoare ca vor veni nu numar de calareti pe regiunea asta
+				nextRegion.addUpcomingArmiesOnTransfer(centralRegion.getArmies() - 1);
+			} // Verifica sa se faca clear pe upcomingArmies !!				
 		}
 		
-		debugPrint(state);		
+		// Sortam regiunile de pe bordura in functie de raportul dintre armata de pe regiune
+		// si suma armatelor inaimcilor din jur
+		Collections.sort(state.getStateAnalyzer().getMyBorderRegionsWithEnemy(), new Comparator<Region>() {
+			@Override
+			public int compare(Region o1, Region o2) {
+				Double ratio1 = o1.getMyArmyEnemyArmyRatio(state);
+				Double ratio2 = o2.getMyArmyEnemyArmyRatio(state);
+				
+				return ratio1.compareTo(ratio2);
+			}			
+		});
+		
+		for(Region borderRegion : state.getStateAnalyzer().getMyBorderRegionsWithEnemy()) {
+			if(borderRegion.getMyArmyEnemyArmyRatio(state) < 1.d) {
+				int armyDiff = borderRegion.getNoOfEnemyArmiesAround(state.getOpponentPlayerName()) - borderRegion.getArmiesWithUpcomingArmies();
+				
+				if(armyDiff < 0)
+					System.out.println("ERROR!");
+				
+				if(armyDiff <= armiesLeft) {
+					placeArmiesMoves.add(new PlaceArmiesMove(myName, borderRegion, armyDiff));
+					
+					armiesLeft -= armyDiff;
+				}
+				else {
+					placeArmiesMoves.add(new PlaceArmiesMove(myName, borderRegion, armiesLeft));
+					armiesLeft = 0;
+				}
+				
+				if(armiesLeft <= 0)
+					break;				
+			}
+		}
+		
+		
+		
+//		while(armiesLeft > 0) {
+//			double rand = Math.random();
+//			int r = (int) (rand* state.getVisibleMap().regions.size());
+//			Region region = state.getVisibleMap().regions.get(r);
+//			
+//			if(region.ownedByPlayer(myName)) {
+//				placeArmiesMoves.add(new PlaceArmiesMove(myName, region, armies));
+//				armiesLeft -= armies;
+//			}
+//		}
+		// debugPrint();
 		return placeArmiesMoves;
 	}
 
@@ -111,16 +135,14 @@ public class BotStarter implements Bot
 	 */
 	public ArrayList<AttackTransferMove> getAttackTransferMoves(BotState state, Long timeOut) 
 	{
-		ArrayList<AttackTransferMove> attackTransferMoves = new ArrayList<AttackTransferMove>();
 		String myName = state.getMyPlayerName();
 		int armies = 5;
 		int maxTransfers = 10;
 		int transfers = 0;
 		
-		for(Region fromRegion : state.getVisibleMap().getRegions())
-		{
-			if(fromRegion.ownedByPlayer(myName)) //do an attack
-			{
+		for(Region fromRegion : state.getVisibleMap().getRegions()) {
+			// Do an attack
+			if(fromRegion.ownedByPlayer(myName)) {
 				ArrayList<Region> possibleToRegions = new ArrayList<Region>();
 				possibleToRegions.addAll(fromRegion.getNeighbors());
 				
@@ -135,20 +157,12 @@ public class BotStarter implements Bot
 						attackTransferMoves.add(new AttackTransferMove(myName, fromRegion, toRegion, armies));
 						break;
 					}
-					else if(toRegion.getPlayerName().equals(myName) && fromRegion.getArmies() > 1
-								&& transfers < maxTransfers) //do a transfer
-					{
-						attackTransferMoves.add(new AttackTransferMove(myName, fromRegion, toRegion, armies));
-						transfers++;
-						break;
-					}
 					else
 						possibleToRegions.remove(toRegion);
 				}
 			}
 		}
 
-		debugPrint(state);
 		return attackTransferMoves;
 	}
 	

@@ -77,7 +77,6 @@ public class DistanceCalculator {
 		shortestPath.pop();		
 		
 		return shortestPath.peekFirst();
-		
 	}
 	
 	

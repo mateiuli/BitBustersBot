@@ -31,6 +31,10 @@ public class Region {
 	// Numarul de armate de pe regiune
 	private int armies;
 	
+	// Numarul de armate care vor fi transferate in viitor
+	// ca sa nu mai plasam armate pe el in prima etapa
+	private int upcomingArmiesOnTransfer;
+	
 	// Numele player-ului ce detine regiunea
 	private String playerName;
 	
@@ -41,6 +45,7 @@ public class Region {
 		this.neighbors = new LinkedList<Region>();
 		this.playerName = "unknown";
 		this.armies = 0;
+		this.upcomingArmiesOnTransfer = 0;
 		
 		superRegion.addSubRegion(this);
 	}
@@ -145,6 +150,37 @@ public class Region {
 	}
 	
 	/**
+	 * 
+	 * @param armies
+	 */
+	public void setUpcomingArmiesOnTransfer(int armies) {
+		upcomingArmiesOnTransfer = armies;
+	}
+	
+	/**
+	 * 
+	 * @return Numarul de armate ce vor fi plsate pe regiune in vitor dupa transfer
+	 */
+	public int getUpcomingArmiesOnTransfer() {
+		return upcomingArmiesOnTransfer;
+	}
+	
+	/**
+	 * Adauga armies la valoarea curenta a upcomingArmiesOnTransfer
+	 * @param armies 
+	 */
+	public void addUpcomingArmiesOnTransfer(int armies) {
+		upcomingArmiesOnTransfer += armies;
+	}
+	
+	/**
+	 * Set upcomingArmiesOnTransfer = 0
+	 */
+	public void clearUpcomingArmiesOnTransfer() {
+		setUpcomingArmiesOnTransfer(0);
+	}
+	
+	/**
 	 * Verifica daca regiunea se afla pe frontiera
 	 * @param playerName Jucatorul care ar trebui sa o detina
 	 * @return
@@ -200,9 +236,13 @@ public class Region {
 		return false;
 	}
 	
-        public double getMyArmyDividedByEnemyArmy(BotState state) {
-            return ((double) armies) / ((double) getNoOfEnemyArmiesAround(state.getOpponentPlayerName()));
-        }
+    public double getMyArmyEnemyArmyRatio(BotState state) {
+        return ((double) (getArmiesWithUpcomingArmies() / getNoOfEnemyArmiesAround(state.getOpponentPlayerName())));
+    }
+    
+    public int getArmiesWithUpcomingArmies() {
+    	return armies + upcomingArmiesOnTransfer;
+    }
 	
 	public String getDebugInfo(BotState state) {
 		StringBuffer sb = new StringBuffer();
