@@ -9,7 +9,7 @@ import map.*;
 
 public class DistanceCalculator {
 	
-	public static List<Region> getShortestPath(Region start, List<Region> destinations) {
+	public static LinkedList<Region> getShortestPath(Region start, List<Region> destinations) {
 		LinkedList<Region> shortestPath = new LinkedList<>();
 		
 		// Initializare coada
@@ -65,10 +65,20 @@ public class DistanceCalculator {
 		return shortestPath;
 	}
 	
+	/**
+	 * 
+	 * @param start
+	 * @param destinations
+	 * @return Imediat regiuea urmatoare din drumul cel mai scurt catre o bordura
+	 */
 	public static Region nextRegionToBorder(Region start, List<Region> destinations) {
-		List<Region> shortestPath = getShortestPath(start, destinations);
+		LinkedList<Region> shortestPath = getShortestPath(start, destinations);
+		// Primul element este defapt nodul de start
+		shortestPath.pop();		
 		
-		
+		return shortestPath.peekFirst();
 		
 	}
+	
+	
 }

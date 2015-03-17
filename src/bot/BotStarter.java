@@ -22,7 +22,9 @@ package bot;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
+import algorithm.DistanceCalculator;
 import map.Region;
 import move.AttackTransferMove;
 import move.PlaceArmiesMove;
@@ -97,7 +99,7 @@ public class BotStarter implements Bot
 		
 		}
 		
-		// debugPrint(state);		
+		debugPrint(state);		
 		return placeArmiesMoves;
 	}
 
@@ -146,7 +148,7 @@ public class BotStarter implements Bot
 			}
 		}
 
-		// debugPrint(state);
+		debugPrint(state);
 		return attackTransferMoves;
 	}
 	
@@ -155,6 +157,7 @@ public class BotStarter implements Bot
 	 * @param state
 	 */
 	public void debugPrint(BotState state) {
+		
 		System.out.println("\n[DEBUG] getMyRegions(); \n");
 		for(Region r : state.getStateAnalyzer().getMyRegions()) {
 			System.out.println(r.getDebugInfo(state));
@@ -184,6 +187,22 @@ public class BotStarter implements Bot
 		for(Region r : state.getStateAnalyzer().getMyBorderRegionsWithNeutrals()) {
 			System.out.println(r.getDebugInfo(state));
 		}		
+		
+		System.out.println("\n[DEBUG] getShortesPatH(); \n");
+		for(Region central : state.getStateAnalyzer().getMyCentralRegions()) {
+			System.out.println("Regiune start: " + central.getId());
+			System.out.println("Nod urmator imediat" + DistanceCalculator.nextRegionToBorder(central, state.getStateAnalyzer().getMyBorderRegions()).getId());
+			
+			
+			List<Region> path = DistanceCalculator.getShortestPath(central, state.getStateAnalyzer().getMyBorderRegions());
+			
+			for(Region node : path) {
+				System.out.print(node.getId() + " -> ");
+			}
+			
+			System.out.println();
+		}
+		
 	}
 
 	public static void main(String[] args)

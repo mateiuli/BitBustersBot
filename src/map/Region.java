@@ -34,9 +34,6 @@ public class Region {
 	// Numele player-ului ce detine regiunea
 	private String playerName;
 	
-	// Lista cu inamici din jur
-	private List<Region> enemiesAround;
-
 	public Region(int id, SuperRegion superRegion)
 	{
 		this.id = id;
@@ -44,7 +41,6 @@ public class Region {
 		this.neighbors = new LinkedList<Region>();
 		this.playerName = "unknown";
 		this.armies = 0;
-		this.enemiesAround = null;
 		
 		superRegion.addSubRegion(this);
 	}
