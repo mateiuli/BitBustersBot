@@ -200,6 +200,9 @@ public class Region {
 		return false;
 	}
 	
+        public double getMyArmyDividedByEnemyArmy(BotState state) {
+            return ((double) armies) / ((double) getNoOfEnemyArmiesAround(state.getOpponentPlayerName()));
+        }
 	
 	public String getDebugInfo(BotState state) {
 		StringBuffer sb = new StringBuffer();
