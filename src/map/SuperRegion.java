@@ -113,7 +113,7 @@ public class SuperRegion {
 		StringBuffer sb = new StringBuffer();
 		sb.append("ID: " + id + "\n");
 		sb.append("Armies reward: " + armiesReward + "\n");
-		sb.append("No of wastelands: " +  + "\n");
+		sb.append("No of wastelands: " + "\n");
 		
 		return sb.toString();
 	}		

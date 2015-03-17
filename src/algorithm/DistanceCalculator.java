@@ -3,13 +3,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import map.*;
 
 public class DistanceCalculator {
 	
 	public static List<Region> getShortestPath(Region start, List<Region> destinations) {
-		List<Region> shortestPath = new LinkedList<>();
+		LinkedList<Region> shortestPath = new LinkedList<>();
 		
 		// Initializare coada
 		LinkedList<Region> Q = new LinkedList<>();
@@ -20,11 +21,11 @@ public class DistanceCalculator {
 		// Pentru reconstruire drum
 		// key:v -> value:u - means that node u was discovered
 		// coming from node v
-		Map<Region, Region> regionDiscovered = new HashMap<>();
+		Map<Region, Region> regionDiscoveredBy = new HashMap<>();
 		
 		// Nodul de inceput
 		Q.push(start);
-		regionDiscovered.put(null, start);
+		regionDiscoveredBy.put(start, null);
 		
 		// Macare ca vizitat
 		visited.put(start, true);
@@ -46,7 +47,7 @@ public class DistanceCalculator {
 				// Marcare ca vizitat
 				visited.put(neighbor, true);	
 				
-				regionDiscovered.put(region, neighbor);
+				regionDiscoveredBy.put(neighbor, region);
 				
 				// Ma opresc daca am gasit nod de destinatie
 				if(destinations.contains(neighbor)) {
@@ -57,15 +58,17 @@ public class DistanceCalculator {
 		}
 		
 		while(destinationRegion != null) {
-			
-			// problem: cant access by value
-			// what i need: get key by value
-			// destinationRegion = regionDiscovered.
+			shortestPath.push(destinationRegion);
+			destinationRegion = regionDiscoveredBy.get(destinationRegion);
 		}
 		
-		
-		// TO DO: Reconstruieste drumul
-		
 		return shortestPath;
+	}
+	
+	public static Region nextRegionToBorder(Region start, List<Region> destinations) {
+		List<Region> shortestPath = getShortestPath(start, destinations);
+		
+		
+		
 	}
 }

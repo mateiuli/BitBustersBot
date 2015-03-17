@@ -166,18 +166,29 @@ public class Region {
 	 * @param playeName
 	 * @return Lista cu inamici vecini
 	 */
-	public List<Region> getEnemiesAround(String playerName) {
+	public List<Region> getEnemiesAround(String opponentPlayerName) {
 		//if(enemiesAround != null)
 		//	return enemiesAround;
 		
 		List<Region> enemiesAround = new ArrayList<>();
 		
 		for(Region neighbor : neighbors) {
-			if(!neighbor.ownedByPlayer(playerName) && !neighbor.isNeutral())
+			if(neighbor.ownedByPlayer(opponentPlayerName))
 				enemiesAround.add(neighbor);
 		}
 		
 		return enemiesAround; 
+	}
+	
+	public int getNoOfEnemyArmiesAround(String opponentPlayerName) {
+		int noOfEnemies = 0;
+		
+		for(Region neighbor : neighbors) {
+			if(neighbor.ownedByPlayer(opponentPlayerName))
+				noOfEnemies += neighbor.armies;
+		}
+		
+		return noOfEnemies;
 	}
 	
 	/**

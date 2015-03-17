@@ -128,6 +128,9 @@ public class StateAnalyzer {
 				myBorderRegionsWithNeutrals.add(region);
 	}
 	
+	/**
+	 * Gaseste toate super-regiunile ocupate de mine
+	 */
 	private void computeMySuperRegions() {
 		mySuperRegions = new ArrayList<>();
 		
