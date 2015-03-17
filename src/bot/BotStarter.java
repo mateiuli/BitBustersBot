@@ -34,12 +34,10 @@ import strategy.*;
 
 public class BotStarter implements Bot 
 {	
-	
-	private ArrayList<AttackTransferMove>  attackTransferMoves = new ArrayList<>(); 
-	
 	@Override
 	/**
 	 * Alege regiunea de start
+	 * @return Regiunea de start
 	 */
 	public Region getStartingRegion(BotState state, Long timeOut) {
 		return (new StartingRegionPicker(state)).getStartingRegion();
@@ -47,84 +45,11 @@ public class BotStarter implements Bot
 	
 	@Override
 	/**
-	 * This method is called for at first part of each round. This example puts two armies on random regions
-	 * until he has no more armies left to place.
+	 *
 	 * @return The list of PlaceArmiesMoves for one round
 	 */
-	public ArrayList<PlaceArmiesMove> getPlaceArmiesMoves(BotState state, Long timeOut) 
-	{				
-		// Golesc lista cu mutarile anterioare - urmeaza miscari noi
-		attackTransferMoves.clear();
-		
-		ArrayList<PlaceArmiesMove> placeArmiesMoves = new ArrayList<PlaceArmiesMove>();
-		String myName = state.getMyPlayerName();
-		int armies = 2;
-		int armiesLeft = state.getStartingArmies();
-
-		for(Region centralRegion : state.getStateAnalyzer().getMyCentralRegions()) {
-			if(centralRegion.getArmies() < 2)
-				continue;
-			
-			// Regiunea imediat urmatoare din drumul cel mai scurt catre o bordura
-			Region nextRegion = DistanceCalculator.nextRegionToBorder(centralRegion, state.getStateAnalyzer().getMyBorderRegions());
-			
-			// Adaugam miscarea de transfer
-			attackTransferMoves.add(new AttackTransferMove(myName, centralRegion, nextRegion, centralRegion.getArmies() - 1));
-			
-			if(nextRegion.isOnBorder(state)) {	
-				// Avertizeaza regiunea urmatoare ca vor veni nu numar de calareti pe regiunea asta
-				nextRegion.addUpcomingArmiesOnTransfer(centralRegion.getArmies() - 1);
-			} // Verifica sa se faca clear pe upcomingArmies !!				
-		}
-		
-		// Sortam regiunile de pe bordura in functie de raportul dintre armata de pe regiune
-		// si suma armatelor inaimcilor din jur
-		Collections.sort(state.getStateAnalyzer().getMyBorderRegionsWithEnemy(), new Comparator<Region>() {
-			@Override
-			public int compare(Region o1, Region o2) {
-				Double ratio1 = o1.getMyArmyEnemyArmyRatio(state);
-				Double ratio2 = o2.getMyArmyEnemyArmyRatio(state);
-				
-				return ratio1.compareTo(ratio2);
-			}			
-		});
-		
-		for(Region borderRegion : state.getStateAnalyzer().getMyBorderRegionsWithEnemy()) {
-			if(borderRegion.getMyArmyEnemyArmyRatio(state) < 1.d) {
-				int armyDiff = borderRegion.getNoOfEnemyArmiesAround(state.getOpponentPlayerName()) - borderRegion.getArmiesWithUpcomingArmies();
-				
-				if(armyDiff < 0)
-					System.out.println("ERROR!");
-				
-				if(armyDiff <= armiesLeft) {
-					placeArmiesMoves.add(new PlaceArmiesMove(myName, borderRegion, armyDiff));
-					
-					armiesLeft -= armyDiff;
-				}
-				else {
-					placeArmiesMoves.add(new PlaceArmiesMove(myName, borderRegion, armiesLeft));
-					armiesLeft = 0;
-				}
-				
-				if(armiesLeft <= 0)
-					break;				
-			}
-		}
-		
-		
-		
-//		while(armiesLeft > 0) {
-//			double rand = Math.random();
-//			int r = (int) (rand* state.getVisibleMap().regions.size());
-//			Region region = state.getVisibleMap().regions.get(r);
-//			
-//			if(region.ownedByPlayer(myName)) {
-//				placeArmiesMoves.add(new PlaceArmiesMove(myName, region, armies));
-//				armiesLeft -= armies;
-//			}
-//		}
-		// debugPrint();
-		return placeArmiesMoves;
+	public ArrayList<PlaceArmiesMove> getPlaceArmiesMoves(BotState state, Long timeOut) {
+		return (new ArmiesPlacer(state)).getPlaceArmiesMoves();
 	}
 
 	@Override
@@ -133,37 +58,8 @@ public class BotStarter implements Bot
 	 * more than 6 armies on it, and transfers if it has less than 6 and a neighboring owned region.
 	 * @return The list of PlaceArmiesMoves for one round
 	 */
-	public ArrayList<AttackTransferMove> getAttackTransferMoves(BotState state, Long timeOut) 
-	{
-		String myName = state.getMyPlayerName();
-		int armies = 5;
-		int maxTransfers = 10;
-		int transfers = 0;
-		
-		for(Region fromRegion : state.getVisibleMap().getRegions()) {
-			// Do an attack
-			if(fromRegion.ownedByPlayer(myName)) {
-				ArrayList<Region> possibleToRegions = new ArrayList<Region>();
-				possibleToRegions.addAll(fromRegion.getNeighbors());
-				
-				while(!possibleToRegions.isEmpty())
-				{
-					double rand = Math.random();
-					int r = (int) (rand*possibleToRegions.size());
-					Region toRegion = possibleToRegions.get(r);
-					
-					if(!toRegion.getPlayerName().equals(myName) && fromRegion.getArmies() > 6) //do an attack
-					{
-						attackTransferMoves.add(new AttackTransferMove(myName, fromRegion, toRegion, armies));
-						break;
-					}
-					else
-						possibleToRegions.remove(toRegion);
-				}
-			}
-		}
-
-		return attackTransferMoves;
+	public ArrayList<AttackTransferMove> getAttackTransferMoves(BotState state, Long timeOut) {
+		return (new AttacksCreator(state)).getAttackMoves();
 	}
 	
 	/**

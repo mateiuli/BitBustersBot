@@ -11,6 +11,8 @@
 package map;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,8 +40,7 @@ public class Region {
 	// Numele player-ului ce detine regiunea
 	private String playerName;
 	
-	public Region(int id, SuperRegion superRegion)
-	{
+	public Region(int id, SuperRegion superRegion) {
 		this.id = id;
 		this.superRegion = superRegion;
 		this.neighbors = new LinkedList<Region>();
@@ -50,8 +51,7 @@ public class Region {
 		superRegion.addSubRegion(this);
 	}
 	
-	public Region(int id, SuperRegion superRegion, String playerName, int armies)
-	{
+	public Region(int id, SuperRegion superRegion, String playerName, int armies) {
 		this.id = id;
 		this.superRegion = superRegion;
 		this.neighbors = new LinkedList<Region>();
@@ -61,10 +61,8 @@ public class Region {
 		superRegion.addSubRegion(this);
 	}
 	
-	public void addNeighbor(Region neighbor)
-	{
-		if(!neighbors.contains(neighbor))
-		{
+	public void addNeighbor(Region neighbor) {
+		if(!neighbors.contains(neighbor)) {
 			neighbors.add(neighbor);
 			neighbor.addNeighbor(this);
 		}
@@ -74,8 +72,7 @@ public class Region {
 	 * @param region a Region object
 	 * @return True if this Region is a neighbor of given Region, false otherwise
 	 */
-	public boolean isNeighbor(Region region)
-	{
+	public boolean isNeighbor(Region region) {
 		if(neighbors.contains(region))
 			return true;
 		return false;
@@ -85,10 +82,10 @@ public class Region {
 	 * @param playerName A string with a player's name
 	 * @return True if this region is owned by given playerName, false otherwise
 	 */
-	public boolean ownedByPlayer(String playerName)
-	{
+	public boolean ownedByPlayer(String playerName) {
 		if(playerName.equals(this.playerName))
 			return true;
+		
 		return false;
 	}
 	
@@ -146,7 +143,7 @@ public class Region {
 	 * @return True if this region is not owned by anyone
 	 */
 	public boolean isNeutral() {
-		return ownedByPlayer("unknown");
+		return ownedByPlayer("neutral");
 	}
 	
 	/**
@@ -212,6 +209,25 @@ public class Region {
 		return enemiesAround; 
 	}
 	
+	/**
+	 * 
+	 * @return Numarul de armate neutre din vecinatatea regiunii
+	 */
+	public int getNoOfNeutralArmies() {
+		int noOfNeutralArmies = 0;
+		
+		for(Region neighbor : neighbors)
+			if(neighbor.isNeutral())
+				noOfNeutralArmies += neighbor.armies;
+		
+		return noOfNeutralArmies;
+	}
+	
+	/**
+	 * 
+	 * @param opponentPlayerName
+	 * @return Numarul de calareti de pe toate regiunile inamice din vecinatate 
+	 */
 	public int getNoOfEnemyArmiesAround(String opponentPlayerName) {
 		int noOfEnemies = 0;
 		
@@ -236,26 +252,51 @@ public class Region {
 		return false;
 	}
 	
+	/**
+	 * 
+	 * @param state
+	 * @return Raportul dintre numarul de calarati ai regiunii dupa posibile transferuri pe regiune
+	 * si numarul de calareti de pe toate regiunile inamice din zona
+	 */
     public double getMyArmyEnemyArmyRatio(BotState state) {
         return ((double) (getArmiesWithUpcomingArmies() / getNoOfEnemyArmiesAround(state.getOpponentPlayerName())));
     }
     
+    /**
+     * 
+     * @return Numarul de calareti ce vor fi pe regiune dupa transferurile ce vor fi executate
+     */
     public int getArmiesWithUpcomingArmies() {
     	return armies + upcomingArmiesOnTransfer;
     }
 	
+    
+    /**
+     * Sorteaza vecinii regiunii dupa un criteriu dat
+     * @param comparator
+     */
+    public void sortNeighbors(Comparator<? super Region> comparator) {
+    	Collections.sort(neighbors, comparator);
+    }
+    
+    /**
+     * Afiseaza informatii de debug
+     * @param state
+     * @return
+     */
 	public String getDebugInfo(BotState state) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("ID: " + id + ", SuperRegion ID: " + superRegion.getId() + "\n");
 		sb.append("Owned by: " + playerName + "\nArmies: " + armies + "\n");
 		sb.append("Neighbors: ");
 		
-		for(Region n : neighbors) 
-			sb.append("Region " + n.getId() + ", ");
+		for(Region n : neighbors)
+			sb.append("Region " + n.getId() + "("+ n.getArmies() +" + " + n.getUpcomingArmiesOnTransfer() + "), ");
 		
 		sb.append("\nIs on border: " + (isOnBorder(state) ? "Yes" : "No") + "\n");
 		sb.append("Has enemies around: " + (hasEnemiesAround(state) ? "Yes" : "No") + "\n");
 		sb.append("Is neutral: " + (isNeutral() ? "Yes" : "No") + "\n");
+		sb.append("Upcoming armies: " + getUpcomingArmiesOnTransfer() + "\n");
 		
 		return sb.toString();
 	}		

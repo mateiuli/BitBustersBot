@@ -2,6 +2,7 @@ package bot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import map.Region;
@@ -59,6 +60,9 @@ public class StateAnalyzer {
 		computeMyBorderRegionsWithEnemy();
 		computeMyBorderRegionsWithNeutrals();		
 		computeMySuperRegions();
+		
+		// Sortare vecini
+		//sortMyRegionsNeighbors();
 	}
 	
 	/**
@@ -214,6 +218,23 @@ public class StateAnalyzer {
 	
 	/**
 	 * 
+	 * @param superRegionId
+	 * @return Lista cu regiunile ce se afla pe frontiera, care
+	 * nu se invineaza cu inamici ci numai cu zone neutre, care
+	 * fac parte din superregiunea data.
+	 */
+	public List<Region> getMyBorderRegionsWithNeutralsWithinSuperRegion(int superRegionId) {
+		List<Region> neutralsBordersWithinSuperRegion = new ArrayList<>();
+		
+		for(Region region : getMyBorderRegionsWithNeutrals())
+			if(region.getSuperRegion().getId() == superRegionId)
+				neutralsBordersWithinSuperRegion.add(region);
+		
+		return neutralsBordersWithinSuperRegion;
+	}
+	
+	/**
+	 * 
 	 * @param state Starea curenta a jocului
 	 * @return Lista cu super-regiunile ocupate de mine
 	 */
@@ -256,6 +277,21 @@ public class StateAnalyzer {
 				occupiedRegions++;
 		
 		return ((double)(occupiedRegions / superRegionSize));
+	}
+	
+	/**
+	 * Sorteaza vecinii regiunilor pentru a-i accesa intr-o anumita ordine (prioritate)
+	 */
+	public void sortMyRegionsNeighbors() {	
+		// Sorteaza crescator dupa numarul de armate de pe regiune
+		Comparator<Region> comparator = new Comparator<Region>() {
+			public int compare(Region o1, Region o2) {
+				return o1.getArmiesWithUpcomingArmies() - o2.getArmiesWithUpcomingArmies();
+			}
+		};
+		
+		for(Region region : getMyRegions())
+			region.sortNeighbors(comparator);
 	}
 	
 }

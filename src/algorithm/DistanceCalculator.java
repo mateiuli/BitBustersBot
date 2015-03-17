@@ -47,6 +47,7 @@ public class DistanceCalculator {
 				// Marcare ca vizitat
 				visited.put(neighbor, true);	
 				
+				// Vector de tati
 				regionDiscoveredBy.put(neighbor, region);
 				
 				// Ma opresc daca am gasit nod de destinatie
@@ -57,6 +58,7 @@ public class DistanceCalculator {
 			}
 		}
 		
+		// Reconstruiesc traseul
 		while(destinationRegion != null) {
 			shortestPath.push(destinationRegion);
 			destinationRegion = regionDiscoveredBy.get(destinationRegion);
@@ -73,7 +75,7 @@ public class DistanceCalculator {
 	 */
 	public static Region nextRegionToBorder(Region start, List<Region> destinations) {
 		LinkedList<Region> shortestPath = getShortestPath(start, destinations);
-		// Primul element este defapt nodul de start
+		// Primul element este defapt nodul de start, il vreau pe urmatorul
 		shortestPath.pop();		
 		
 		return shortestPath.peekFirst();

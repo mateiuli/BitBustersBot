@@ -61,8 +61,10 @@ public class BotState {
 	// Analizator de situatie
 	private StateAnalyzer stateAnalyzer = null;
 	
-	public BotState()
-	{
+	// Lista cu actiunile de transfer, calculate inainte de a placa calaretii pe regiuni
+	public ArrayList<AttackTransferMove>  attackTransferMoves = new ArrayList<>(); 
+	
+	public BotState() {
 		opponentMoves = new ArrayList<Move>();
 		roundNumber = 0;
 	}
@@ -141,8 +143,7 @@ public class BotState {
 					Region region = fullMap.getRegion(Integer.parseInt(mapInput[i]));
 					i++;
 					String[] neighborIds = mapInput[i].split(",");
-					for(int j=0; j<neighborIds.length; j++)
-					{
+					for(int j=0; j<neighborIds.length; j++)	{
 						Region neighbor = fullMap.getRegion(Integer.parseInt(neighborIds[j]));
 						region.addNeighbor(neighbor);
 					}
@@ -195,23 +196,35 @@ public class BotState {
 	 */
 	public void updateMap(String[] mapInput)
 	{
+		// Copie dupa intreaga harta
 		visibleMap = fullMap.getMapCopy();
-		for(int i=1; i<mapInput.length; i++)
-		{
+		
+		for(int i = 1; i < mapInput.length; i++) {
 			try {
 				Region region = visibleMap.getRegion(Integer.parseInt(mapInput[i]));
+				
+				// Parsare nume jucator
 				String playerName = mapInput[i+1];
+				
+				// Parsare numar de armate
 				int armies = Integer.parseInt(mapInput[i+2]);
 				
+				// Seteaza faraonul la regiunie 
 				region.setPlayerName(playerName);
+				
+				// Seteaza numarul de armate de pe regiune
 				region.setArmies(armies);
+				
+				// Seteaza pe 0 numraul de armate ce vor fi transferate pe aceasta regiune
 				region.clearUpcomingArmiesOnTransfer();
+						
 				i += 2;
 			}
 			catch(Exception e) {
 				System.err.println("Unable to parse Map Update " + e.getMessage());
 			}
 		}
+		
 		ArrayList<Region> unknownRegions = new ArrayList<Region>();
 		
 		// remove regions which are unknown.
