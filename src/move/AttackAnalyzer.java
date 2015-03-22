@@ -1,4 +1,6 @@
 package move;
+import java.util.List;
+
 import map.*;
 import move.*;
 
@@ -31,29 +33,6 @@ public class AttackAnalyzer {
 		// Armate d-ale mele distruse in atac
 		minAttackersDestroyed = getMinAttackersDestroyed(attackMove);
 		maxAttackersDestroyed = getMaxAttackersDestroyed(attackMove);
-	}
-	
-	/**
-	 * 
-	 * @param attackMove
-	 * @return True daca am sanse sa cuceresc teritoriul inamicului, False daca nu
-	 */
-	public boolean canConquere() {
-		// ## daca mai e un singu vecin neutru du-te cu toata armata
-		// ## atac cumulat, daca e un inamic inconjurat de mine, rupe-i ficatul stang, dupa dreptul. si spargei ochii
-		// Armatele cu care se apara inamicul
-		int enemyArmies = attackMove.getToRegion().getArmies();
-		
-		// Daca numarul maxim de armate inamice care pot fi distruse in atac
-		// e mai mic decat numarul total de armate al inamicului, atunci 
-		// nu exista sanse de reusita ale atacului
-		if(attackMove.getArmies() == attackMove.getToRegion().getArmies())
-			return false;
-		
-		if(attackMove.getArmies() > (attackMove.getToRegion().getArmies() + (0.7 * attackMove.getToRegion().getArmies())))
-			return true;
-		
-		return false;
 	}
 	
 	/**
@@ -122,6 +101,32 @@ public class AttackAnalyzer {
 	
 	/**
 	 * 
+	 * @param attackMoves
+	 * @return True daca atacurile succesive catre fix aceasi regiune inamica vor avea success, 
+	 * False daca nu vor avea success
+	 */
+	public static boolean canConquereWithSuccessiveAttacks(List<AttackTransferMove> attackMoves) {
+		if(attackMoves == null || attackMoves.size() < 1)
+			return false;
+		
+		int totalArmies = 0;
+		int enemyArmies = attackMoves.get(0).getToRegion().getArmies();
+		
+		for(AttackTransferMove attackMove : attackMoves) {
+			totalArmies += attackMove.getArmies();
+		}
+		
+		// Calculez cate armate inamice ar distruge toata armata acumulata
+		int minDefendersDestroyed = getMinDefendersDestroyed(totalArmies);
+		
+		if(minDefendersDestroyed >= enemyArmies)
+			return true;
+		
+		return false;		
+	}
+	
+	/**
+	 * 
 	 * @param myRegion
 	 * @param fromRegion
 	 * @return Numarul minim de inamici distrusi intr-un atac cu toti calaretii
@@ -132,6 +137,13 @@ public class AttackAnalyzer {
 		
 		return ((int)Math.round(defendersDestroyed));
 	}
+	
+	private static int getMinDefendersDestroyed(int attackers) {
+		double defendersDestroyed = (double) attackers * 0.504d;
+		
+		return ((int)Math.round(defendersDestroyed));
+	}
+	
 	
 	/**
 	 * 

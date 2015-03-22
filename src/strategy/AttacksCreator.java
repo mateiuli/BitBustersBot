@@ -34,6 +34,7 @@ public class AttacksCreator {
 	}
 	
 	public void computeGoForBonus() {
+		// Daca mai e o singura regiune vecina ---> ia-o cu toti! nu mai calcula minimul
 		// Se mai afla regiuni pe bordura cu o singra neutrals aman2 si nu o ataca niciuna, wtf
 		// vezi ca mai ataca si 2 pe 2
 		
@@ -188,6 +189,8 @@ public class AttacksCreator {
 					region.setArmies(region.getArmies() - attackMove.getArmies());
 				}
 				else {
+					// Atacul nu poate avea loc direct, salvez mai tarziu
+					// ca sa verific daca poate avea loc un atac cumulat
 					if(!toEnemy.containsKey(enemy))
 						toEnemy.put(enemy, new ArrayList<>());
 					
@@ -196,25 +199,24 @@ public class AttacksCreator {
 			}
 		}
 		
-		AttackTransferMove expansionMove = null; // new AttackTransferMove(state.getMyPlayerName(), region, enemy, possibleArmies);
-		AttackAnalyzer attackAnalyzer = null; //new AttackAnalyzer(expansionMove);
-		
+		// Atacurile directe nereusite catre toate regiunile inamice; se poate finaliza 
+		// cu success daca se acumuleaza suficienta armata pentru atacuri succesive
 		for(Entry<Region, ArrayList<Region>> pair: toEnemy.entrySet()) {
-			int sum = 0;
-			for(Region attacker : pair.getValue())
-				sum += attacker.getArmies() - 1;
+			// Atacurile succesive ce pot avea loc asupra acestui inamic
+			List<AttackTransferMove> attackMoves = new ArrayList<>();
+			for(Region attacker : pair.getValue()) {
+				attackMoves.add(new AttackTransferMove(state.getMyPlayerName(), attacker, pair.getKey()));
+			}
 			
-			if(pair.getValue().size() < 1)
-				continue;
-			
-			expansionMove = new AttackTransferMove(state.getMyPlayerName(), pair.getValue().get(0), pair.getKey(), sum);
-			attackAnalyzer = new AttackAnalyzer(expansionMove);
-			
-			if(attackAnalyzer.canConquere()) {
+			// Verific sa vad daca atacurile succesive vor fi cu success
+			if(AttackAnalyzer.canConquereWithSuccessiveAttacks(attackMoves)) {
+				System.err.println("ATAC ACUMULAT SUCCESS!");
+				System.err.println("Atack pe " + pair.getKey().getId() + " cu: ");
 				for(Region attacker : pair.getValue()) {
-					expansionMove = new AttackTransferMove(state.getMyPlayerName(), attacker, pair.getKey(), attacker.getArmies() - 1);
-					state.attackTransferMoves.add(expansionMove);
-				}				
+					System.err.print(attacker.getId() + ", ");
+				}
+				
+				state.attackTransferMoves.addAll(attackMoves);
 			}
 		}
 	}
