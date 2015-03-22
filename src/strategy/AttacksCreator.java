@@ -43,7 +43,7 @@ public class AttacksCreator {
 		 */
 		System.err.println("GO FOR BONUS");
 		
-		for(Region region : state.getStateAnalyzer().getMyBorderRegionsWithNeutrals()) {
+		for(Region region : state.getStateAnalyzer().getMyBorderRegions()) { // getMyBorderRegionsWithNeutrals()
 			// Nu am cu ce sa plec de pe regiunea asta
 			if(region.getArmies() <= 1)
 				continue;
@@ -67,28 +67,16 @@ public class AttacksCreator {
 				if(superRegionNeighbor.getArmies() >= region.getArmies())
 					continue;
 				
-				// Simulez atacul cu toti calaretii posibil pe care ii pot mobiliza
-				int possibleArmies = superRegionNeighbor.getArmies() + 1;
-				AttackTransferMove expansionMove = null; // new AttackTransferMove(state.getMyPlayerName(), region, enemy, possibleArmies);
-				AttackAnalyzer attackAnalyzer = null; //new AttackAnalyzer(expansionMove);
+				// Generez miscarea de atac
+				AttackTransferMove attackMove = new AttackTransferMove(state.getMyPlayerName(), region, superRegionNeighbor);
 				
-				do {
-					expansionMove = new AttackTransferMove(state.getMyPlayerName(), region, superRegionNeighbor, possibleArmies);
-					attackAnalyzer = new AttackAnalyzer(expansionMove);
-					possibleArmies++;
-				} while(!attackAnalyzer.canConquere() && possibleArmies < region.getArmies() - 1);
-				
-				if(!attackAnalyzer.canConquere())
-					continue;
-				
-				// Regiunea ar putea fi cucerita cu toti calaretii, dar eu totusi vreau
-				// sa cuceresc cu un numar minim de calareti
-				//expansionMove.setArmies(attackAnalyzer.getMinAttackersToConquere());
-				
-				state.attackTransferMoves.add(expansionMove);
-				region.setArmies(region.getArmies() - expansionMove.getArmies());
-			}
-			
+				// Verifica daca se poate cuceri cu un numar minim de calareti
+				// Daca da, atunci cucereste cu ei
+				if(AttackAnalyzer.canConquereWithMinNumberOfAttackers(attackMove)) {
+					state.attackTransferMoves.add(attackMove);
+					region.setArmies(region.getArmies() - attackMove.getArmies());
+				}
+			}			
 		}
 	}
 	
@@ -103,7 +91,7 @@ public class AttacksCreator {
 		 * si cuceresc acele regiuni care fac parte din aceasi super-regiune
 		 */
 		System.err.println("EXPAND");
-		for(Region region : state.getStateAnalyzer().getMyBorderRegionsWithNeutralsAndEnemy()) {
+		for(Region region : state.getStateAnalyzer().getMyBorderRegions()) {
 			// Nu am cu ce sa plec de pe regiunea asta
 			if(region.getArmies() <= 1)
 				continue;
@@ -128,26 +116,15 @@ public class AttacksCreator {
 				if(neighbor.getArmies() >= region.getArmies())
 					continue;
 				
-				// Simulez atacul cu toti calaretii posibil pe care ii pot mobiliza
-				int possibleArmies = neighbor.getArmies() + 1;
-				AttackTransferMove expansionMove = null; // new AttackTransferMove(state.getMyPlayerName(), region, enemy, possibleArmies);
-				AttackAnalyzer attackAnalyzer = null; //new AttackAnalyzer(expansionMove);
+				// Generez miscarea de atac
+				AttackTransferMove attackMove = new AttackTransferMove(state.getMyPlayerName(), region, neighbor);
 				
-				do {
-					expansionMove = new AttackTransferMove(state.getMyPlayerName(), region, neighbor, possibleArmies);
-					attackAnalyzer = new AttackAnalyzer(expansionMove);
-					possibleArmies++;
-				} while(!attackAnalyzer.canConquere() && possibleArmies < region.getArmies() - 1);
-				
-				if(!attackAnalyzer.canConquere())
-					continue;
-				
-				// Regiunea ar putea fi cucerita cu toti calaretii, dar eu totusi vreau
-				// sa cuceresc cu un numar minim de calareti
-				//expansionMove.setArmies(attackAnalyzer.getMinAttackersToConquere());
-				
-				state.attackTransferMoves.add(expansionMove);
-				region.setArmies(region.getArmies() - expansionMove.getArmies());
+				// Verifica daca se poate cuceri cu un numar minim de calareti
+				// Daca da, atunci cucereste cu ei
+				if(AttackAnalyzer.canConquereWithMinNumberOfAttackers(attackMove)) {
+					state.attackTransferMoves.add(attackMove);
+					region.setArmies(region.getArmies() - attackMove.getArmies());
+				}
 			}
 			
 		}
@@ -200,42 +177,22 @@ public class AttacksCreator {
 				
 				System.err.println("Inamicul nu are mai mult ca mine");
 				
+				// Generez miscarea de atac
+				AttackTransferMove attackMove = new AttackTransferMove(state.getMyPlayerName(), region, enemy);
 				
-				// Simulez atacul cu toti calaretii posibil pe care ii pot mobiliza
-				int possibleArmies = enemy.getArmies() + 1;
-				AttackTransferMove expansionMove = null; // new AttackTransferMove(state.getMyPlayerName(), region, enemy, possibleArmies);
-				AttackAnalyzer attackAnalyzer = null; //new AttackAnalyzer(expansionMove);
-				
-				do {
-					expansionMove = new AttackTransferMove(state.getMyPlayerName(), region, enemy, possibleArmies);
-					attackAnalyzer = new AttackAnalyzer(expansionMove);
-					possibleArmies++;
-				} while(!attackAnalyzer.canConquere() && possibleArmies < region.getArmies() - 1);
-				
-				if(!attackAnalyzer.canConquere()) {
+				// Verifica daca se poate cuceri cu un numar minim de calareti
+				// Daca da, atunci cucereste cu ei
+				if(AttackAnalyzer.canConquereWithMinNumberOfAttackers(attackMove)) {
+					System.err.println("Il pot cucerii");
+					state.attackTransferMoves.add(attackMove);
+					region.setArmies(region.getArmies() - attackMove.getArmies());
+				}
+				else {
 					if(!toEnemy.containsKey(enemy))
 						toEnemy.put(enemy, new ArrayList<>());
 					
-					toEnemy.get(enemy).add(region);					
-					continue;
+					toEnemy.get(enemy).add(region);
 				}
-				
-				// Daca nu se poate cucerii cu numarul maxim de calareti disponibili
-				// atunci nu am ce face si trec mai departe
-//				if(!attackAnalyzer.canConquere()) {
-//					System.err.println("Nu pot cucerii regiunea + " + enemy.getDebugInfo(state));
-//					System.err.println("Cu regiunea + " + region.getDebugInfo(state));
-//					System.err.println(attackAnalyzer.getDebugInfo());
-//					continue;
-//				}
-//				
-				System.err.println("Il pot cucerii");
-				// Regiunea ar putea fi cucerita cu toti calaretii, dar eu totusi vreau
-				// sa cuceresc cu un numar minim de calareti
-				//expansionMove.setArmies(attackAnalyzer.getMinAttackersToConquere());
-				
-				state.attackTransferMoves.add(expansionMove);	
-				region.setArmies(region.getArmies() - expansionMove.getArmies());
 			}
 		}
 		
