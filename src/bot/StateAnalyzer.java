@@ -168,6 +168,7 @@ public class StateAnalyzer {
 		return enemyRegions;
 	}
 	
+	
 	/**
 	 * 
 	 * @return Lista cu toate regiunile mele ce se afla pe frontiera
@@ -243,6 +244,14 @@ public class StateAnalyzer {
 			return new ArrayList<>();
 						
 		return mySuperRegions;
+	}
+	
+	public List<Region> getMyBorderRegionsWithNeutralsAndEnemy() {
+		List<Region> regions = new ArrayList<>();
+		regions.addAll(getMyBorderRegionsWithNeutrals());
+		regions.addAll(getMyBorderRegionsWithEnemy());
+		
+		return regions;
 	}
 	
 	/**

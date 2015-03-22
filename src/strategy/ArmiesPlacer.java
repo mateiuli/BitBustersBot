@@ -66,7 +66,7 @@ public class ArmiesPlacer {
 				Double ratio1 = o1.getMyArmyEnemyArmyRatio(state);
 				Double ratio2 = o2.getMyArmyEnemyArmyRatio(state);
 				
-				return ratio2.compareTo(ratio1);
+				return ratio1.compareTo(ratio2);
 			}			
 		});
 		
@@ -85,7 +85,7 @@ public class ArmiesPlacer {
 			
 			
 			// Minimul de calarati ce trebuie plasati pentru aparare
-			double var = 0.7 * (double) borderRegion.getNoOfEnemyArmiesAround(state.getOpponentPlayerName());
+			double var = 0.5 * (double) borderRegion.getNoOfEnemyArmiesAround(state.getOpponentPlayerName());
 			int armyDiff = (int) (Math.round(var) - borderRegion.getArmiesWithUpcomingArmies());
 			
 			//System.err.println("armyDiff = " + armyDiff);

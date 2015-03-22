@@ -317,19 +317,18 @@ public class Region {
 		StringBuffer sb = new StringBuffer();
 		sb.append("ID: " + id + ", SuperRegion ID: " + superRegion.getId() + "\n");
 		sb.append("Owned by: " + playerName + "\nArmies: " + armies + "\n");
-		sb.append("Neighbors: ");
-		
-		for(Region n : neighbors)
-			sb.append("Region " + n.getId() + "("+ n.getArmies() +" + " + n.getUpcomingArmiesOnTransfer() + "), ");
-		
-		sb.append("\nIs on border: " + (isOnBorder(state) ? "Yes" : "No") + "\n");
-		sb.append("Has enemies around: " + (hasEnemiesAround(state) ? "Yes" : "No") + "\n");
-		sb.append("Is neutral: " + (isNeutral() ? "Yes" : "No") + "\n");
-		sb.append("Upcoming armies: " + getUpcomingArmiesOnTransfer() + "\n");
-		sb.append("My army/enemy army ratio: " + getMyArmyEnemyArmyRatio(state) + "\n");
-		sb.append("Super-region neighbors: " + getSuperRegionNeighbors().size() + "\n");
+//		sb.append("Neighbors: ");
+//		
+//		for(Region n : neighbors)
+//			sb.append("Region " + n.getId() + "("+ n.getArmies() +" + " + n.getUpcomingArmiesOnTransfer() + "), ");
+//		
+//		sb.append("\nIs on border: " + (isOnBorder(state) ? "Yes" : "No") + "\n");
+//		sb.append("Has enemies around: " + (hasEnemiesAround(state) ? "Yes" : "No") + "\n");
+//		sb.append("Is neutral: " + (isNeutral() ? "Yes" : "No") + "\n");
+//		sb.append("Upcoming armies: " + getUpcomingArmiesOnTransfer() + "\n");
+//		sb.append("My army/enemy army ratio: " + getMyArmyEnemyArmyRatio(state) + "\n");
+//		sb.append("Super-region neighbors: " + getSuperRegionNeighbors().size() + "\n");
 		
 		return sb.toString();
-	}		
-
+	}
 }

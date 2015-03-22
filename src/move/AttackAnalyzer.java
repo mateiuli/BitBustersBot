@@ -39,16 +39,21 @@ public class AttackAnalyzer {
 	 * @return True daca am sanse sa cuceresc teritoriul inamicului, False daca nu
 	 */
 	public boolean canConquere() {
+		// ## daca mai e un singu vecin neutru du-te cu toata armata
+		// ## atac cumulat, daca e un inamic inconjurat de mine, rupe-i ficatul stang, dupa dreptul. si spargei ochii
 		// Armatele cu care se apara inamicul
 		int enemyArmies = attackMove.getToRegion().getArmies();
 		
 		// Daca numarul maxim de armate inamice care pot fi distruse in atac
 		// e mai mic decat numarul total de armate al inamicului, atunci 
 		// nu exista sanse de reusita ale atacului
-		if(maxDefendersDestroyed < enemyArmies)
+		if(attackMove.getArmies() == attackMove.getToRegion().getArmies())
 			return false;
 		
-		return true;
+		if(attackMove.getArmies() > (attackMove.getToRegion().getArmies() + (0.7 * attackMove.getToRegion().getArmies())))
+			return true;
+		
+		return false;
 	}
 	
 	/**
