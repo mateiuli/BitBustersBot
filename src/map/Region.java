@@ -97,6 +97,15 @@ public class Region {
 	}
 	
 	/**
+	 * Adauga un numar de calareti la armata curenta
+	 * @param armies
+	 */
+	public void addArmies(int armies) {
+		this.armies += armies;
+	}
+	
+	
+	/**
 	 * @param playerName Sets the Name of the player that this Region belongs to
 	 */
 	public void setPlayerName(String playerName) {
@@ -192,6 +201,21 @@ public class Region {
 	
 	/**
 	 * 
+	 * @param superRegionId
+	 * @return Lista cu vecinii din aceasi super-regiune ca regiunea
+	 */
+	public List<Region> getSuperRegionNeighbors() {
+		List<Region> superRegionNeighbors = new ArrayList<>();
+		
+		for(Region neighbor : neighbors)
+			if(neighbor.superRegion.getId() == superRegion.getId())
+				superRegionNeighbors.add(neighbor);
+		
+		return superRegionNeighbors;
+	}
+	
+	/**
+	 * 
 	 * @param playeName
 	 * @return Lista cu inamici vecini
 	 */
@@ -259,7 +283,12 @@ public class Region {
 	 * si numarul de calareti de pe toate regiunile inamice din zona
 	 */
     public double getMyArmyEnemyArmyRatio(BotState state) {
-        return ((double) (getArmiesWithUpcomingArmies() / getNoOfEnemyArmiesAround(state.getOpponentPlayerName())));
+    	double noOfEnemyArmies = getNoOfEnemyArmiesAround(state.getOpponentPlayerName());
+    	
+    	if(noOfEnemyArmies == 0)
+    		noOfEnemyArmies = 1;
+    	
+        return ((double) (getArmiesWithUpcomingArmies() / noOfEnemyArmies));
     }
     
     /**
@@ -297,6 +326,8 @@ public class Region {
 		sb.append("Has enemies around: " + (hasEnemiesAround(state) ? "Yes" : "No") + "\n");
 		sb.append("Is neutral: " + (isNeutral() ? "Yes" : "No") + "\n");
 		sb.append("Upcoming armies: " + getUpcomingArmiesOnTransfer() + "\n");
+		sb.append("My army/enemy army ratio: " + getMyArmyEnemyArmyRatio(state) + "\n");
+		sb.append("Super-region neighbors: " + getSuperRegionNeighbors().size() + "\n");
 		
 		return sb.toString();
 	}		

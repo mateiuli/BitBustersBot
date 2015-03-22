@@ -23,12 +23,15 @@ public class AttackTransferMove extends Move {
 	private Region toRegion;
 	private int armies;
 	
-	public AttackTransferMove(String playerName, Region fromRegion, Region toRegion, int armies)
-	{
+	public AttackTransferMove(String playerName, Region fromRegion, Region toRegion, int armies) {
 		super.setPlayerName(playerName);
 		this.fromRegion = fromRegion;
 		this.toRegion = toRegion;
 		this.armies = armies;
+	}
+	
+	public AttackTransferMove(String playerName, Region fromRegion, Region toRegion) {
+		this(playerName, fromRegion, toRegion, fromRegion.getArmies() - 1);
 	}
 	
 	/**

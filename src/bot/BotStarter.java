@@ -49,6 +49,7 @@ public class BotStarter implements Bot
 	 * @return The list of PlaceArmiesMoves for one round
 	 */
 	public ArrayList<PlaceArmiesMove> getPlaceArmiesMoves(BotState state, Long timeOut) {
+		debugPrint(state);
 		return (new ArmiesPlacer(state)).getPlaceArmiesMoves();
 	}
 
@@ -67,51 +68,52 @@ public class BotStarter implements Bot
 	 * @param state
 	 */
 	public void debugPrint(BotState state) {
+		System.err.println("Round number: " + state.getRoundNumber());
 		
-		System.out.println("\n[DEBUG] getMyRegions(); \n");
+		System.err.println("\n[DEBUG] getMyRegions(); \n");
 		for(Region r : state.getStateAnalyzer().getMyRegions()) {
-			System.out.println(r.getDebugInfo(state));
+			System.err.println(r.getDebugInfo(state));
 		}
 		
-		System.out.println("\n[DEBUG] getEnemyRegions(); \n");
+		System.err.println("\n[DEBUG] getEnemyRegions(); \n");
 		for(Region r : state.getStateAnalyzer().getEnemyRegions()) {
-			System.out.println(r.getDebugInfo(state));
+			System.err.println(r.getDebugInfo(state));
 		}
 		
-		System.out.println("\n[DEBUG] getMyBorderRegions(); \n");
+		System.err.println("\n[DEBUG] getMyBorderRegions(); \n");
 		for(Region r : state.getStateAnalyzer().getMyBorderRegions()) {
-			System.out.println(r.getDebugInfo(state));
+			System.err.println(r.getDebugInfo(state));
 		}
 		
-		System.out.println("\n[DEBUG] getMyCentralRegions(); \n");
+		System.err.println("\n[DEBUG] getMyCentralRegions(); \n");
 		for(Region r : state.getStateAnalyzer().getMyCentralRegions()) {
-			System.out.println(r.getDebugInfo(state));
+			System.err.println(r.getDebugInfo(state));
 		}
 		
-		System.out.println("\n[DEBUG] getMyBorderRegionsWithEnemy(); \n");
+		System.err.println("\n[DEBUG] getMyBorderRegionsWithEnemy(); \n");
 		for(Region r : state.getStateAnalyzer().getMyBorderRegionsWithEnemy()) {
-			System.out.println(r.getDebugInfo(state));
+			System.err.println(r.getDebugInfo(state));
 		}
 		
-		System.out.println("\n[DEBUG] getMyBorderRegionsWithNeutrals(); \n");
+		System.err.println("\n[DEBUG] getMyBorderRegionsWithNeutrals(); \n");
 		for(Region r : state.getStateAnalyzer().getMyBorderRegionsWithNeutrals()) {
-			System.out.println(r.getDebugInfo(state));
+			System.err.println(r.getDebugInfo(state));
 		}		
 		
-		System.out.println("\n[DEBUG] getShortesPatH(); \n");
-		for(Region central : state.getStateAnalyzer().getMyCentralRegions()) {
-			System.out.println("Regiune start: " + central.getId());
-			System.out.println("Nod urmator imediat" + DistanceCalculator.nextRegionToBorder(central, state.getStateAnalyzer().getMyBorderRegions()).getId());
-			
-			
-			List<Region> path = DistanceCalculator.getShortestPath(central, state.getStateAnalyzer().getMyBorderRegions());
-			
-			for(Region node : path) {
-				System.out.print(node.getId() + " -> ");
-			}
-			
-			System.out.println();
-		}
+//		System.out.println("\n[DEBUG] getShortesPatH(); \n");
+//		for(Region central : state.getStateAnalyzer().getMyCentralRegions()) {
+//			System.out.println("Regiune start: " + central.getId());
+//			System.out.println("Nod urmator imediat" + DistanceCalculator.nextRegionToBorder(central, state.getStateAnalyzer().getMyBorderRegions()).getId());
+//			
+//			
+//			List<Region> path = DistanceCalculator.getShortestPath(central, state.getStateAnalyzer().getMyBorderRegions());
+//			
+//			for(Region node : path) {
+//				System.out.print(node.getId() + " -> ");
+//			}
+//			
+//			System.out.println();
+//		}
 		
 	}
 

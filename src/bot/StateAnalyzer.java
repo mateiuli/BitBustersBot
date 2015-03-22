@@ -62,7 +62,7 @@ public class StateAnalyzer {
 		computeMySuperRegions();
 		
 		// Sortare vecini
-		//sortMyRegionsNeighbors();
+		sortMyRegionsNeighbors();
 	}
 	
 	/**
