@@ -41,6 +41,10 @@ public class DistanceCalculator {
 				if(visited.containsKey(neighbor))
 					continue;
 				
+				// Drumul minim prin intermediul vecinilor detiunti de mine
+				if(!neighbor.ownedByPlayer(start.getPlayerName()))
+					continue;
+				
 				// Adauga vecinul in coada
 				Q.push(neighbor);
 				
@@ -75,6 +79,9 @@ public class DistanceCalculator {
 	 */
 	public static Region nextRegionToBorder(Region start, List<Region> destinations) {
 		LinkedList<Region> shortestPath = getShortestPath(start, destinations);
+		if(shortestPath.size() == 0)
+			return null;
+		
 		// Primul element este defapt nodul de start, il vreau pe urmatorul
 		shortestPath.pop();		
 		

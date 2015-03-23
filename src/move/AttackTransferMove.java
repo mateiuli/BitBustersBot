@@ -34,6 +34,10 @@ public class AttackTransferMove extends Move {
 		this(playerName, fromRegion, toRegion, fromRegion.getArmies() - 1);
 	}
 	
+	public void setArmiesToMax() {
+		armies = fromRegion.getArmies() - 1;
+	}
+	
 	/**
 	 * @param n Sets the number of armies of this Move
 	 */

@@ -49,7 +49,7 @@ public class BotStarter implements Bot
 	 * @return The list of PlaceArmiesMoves for one round
 	 */
 	public ArrayList<PlaceArmiesMove> getPlaceArmiesMoves(BotState state, Long timeOut) {
-		debugPrint(state);
+		// debugPrint(state);
 		return (new ArmiesPlacer(state)).getPlaceArmiesMoves();
 	}
 

@@ -288,8 +288,18 @@ public class Region {
     	if(noOfEnemyArmies == 0)
     		noOfEnemyArmies = 1;
     	
-        return ((double) (getArmiesWithUpcomingArmies() / noOfEnemyArmies));
+        return ((double) ((getArmiesWithUpcomingArmies() - 1)/ noOfEnemyArmies));
     }
+    
+//    public double getEnemyArmyMyArmyRation(BotState state) {
+//    	if(!ownedByPlayer(state.getOpponentPlayerName()))
+//    		return 1;
+//    	
+//    	if(noOfEnemyArmies == 0)
+//    		noOfEnemyArmies = 1;
+//    	
+//        return ((double) ((getArmiesWithUpcomingArmies() - 1)/ noOfEnemyArmies));
+//    }
     
     /**
      * 

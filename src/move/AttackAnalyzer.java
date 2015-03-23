@@ -66,6 +66,10 @@ public class AttackAnalyzer {
 	 * @return True daca regiunea poate fi cucerita, False daca nu
 	 */
 	public static boolean canConquereWithMinNumberOfAttackers(AttackTransferMove attackMove) {
+		return canConquereWithMinNumberOfAttackers(attackMove, 0);
+	}
+	
+	public static boolean canConquereWithMinNumberOfAttackers(AttackTransferMove attackMove, double error) {
 		// Presupun ca as avea nevoie de atata armata
 		int possibleArmies = attackMove.getToRegion().getArmies() + 1;
 		
@@ -74,6 +78,9 @@ public class AttackAnalyzer {
 		
 		// Numarul de armate ale inamicului
 		int enemyArmies = attackMove.getToRegion().getArmies();
+		
+		if(enemyArmies >= maxArmies)
+			return false;
 		
 		// Numarul initial de armate din miscarea de atac
 		int initialArmies = attackMove.getArmies();
@@ -87,7 +94,7 @@ public class AttackAnalyzer {
 		
 			// Daca cu acest numar de calareti pot distruge mai multi
 			// decat sunt deja pe teritoriul inamic
-			if(minDefendersDestroyed >= enemyArmies) {
+			if(minDefendersDestroyed >= enemyArmies + error * enemyArmies) {
 				return true;
 			}
 				
@@ -118,6 +125,10 @@ public class AttackAnalyzer {
 		
 		// Calculez cate armate inamice ar distruge toata armata acumulata
 		int minDefendersDestroyed = getMinDefendersDestroyed(totalArmies);
+		
+		System.err.println("Armata totala acumulata = " + totalArmies);
+		System.err.println("Armata inamica = " + enemyArmies);
+		System.err.println("Armata inamica pe care o pot distruge = " + minDefendersDestroyed);
 		
 		if(minDefendersDestroyed >= enemyArmies)
 			return true;
