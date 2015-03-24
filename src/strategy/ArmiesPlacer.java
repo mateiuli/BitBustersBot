@@ -41,7 +41,7 @@ public class ArmiesPlacer {
 		placeArmiesToExplore(); 
 		
 		// Mai transfera
-		computeFinalTransferMoves();
+		// computeFinalTransferMoves();
 		
 		// Update calareti regiune pentru atac
 		for(PlaceArmiesMove move : this.placeArmiesMoves) {

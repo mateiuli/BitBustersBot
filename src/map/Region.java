@@ -257,7 +257,7 @@ public class Region {
 		
 		for(Region neighbor : neighbors) {
 			if(neighbor.ownedByPlayer(opponentPlayerName))
-				noOfEnemies += neighbor.armies;
+				noOfEnemies += neighbor.armies - 1;
 		}
 		
 		return noOfEnemies;
@@ -341,4 +341,14 @@ public class Region {
 		
 		return sb.toString();
 	}
+	
+	public boolean isAlone() {
+		for(Region neighbor : neighbors) {
+			if(neighbor.ownedByPlayer(this.playerName))
+				return false;
+		}
+		
+		return true;
+	}
+	
 }

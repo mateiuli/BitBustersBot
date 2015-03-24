@@ -71,7 +71,7 @@ public class AttackAnalyzer {
 	
 	public static boolean canConquereWithMinNumberOfAttackers(AttackTransferMove attackMove, double error) {
 		// Presupun ca as avea nevoie de atata armata
-		int possibleArmies = attackMove.getToRegion().getArmies() + 1;
+		int possibleArmies = attackMove.getToRegion().getArmies();
 		
 		// Numarul maxim de armate cu care pot ataca
 		int maxArmies = attackMove.getFromRegion().getArmies() - 1;
@@ -85,7 +85,7 @@ public class AttackAnalyzer {
 		// Numarul initial de armate din miscarea de atac
 		int initialArmies = attackMove.getArmies();
 		
-		while(possibleArmies < maxArmies) {
+		while(possibleArmies <= maxArmies) {
 			// Setez numarul de armate posibil
 			attackMove.setArmies(possibleArmies);
 			
@@ -103,6 +103,22 @@ public class AttackAnalyzer {
 
 		// Daca am ajuns aici inseamna ca nu am suficienta armata cat sa cuceresc
 		attackMove.setArmies(initialArmies);
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @param myDefenders
+	 * @param enemyAttackers
+	 * @return True daca numarul de calareti de aparare pot fi omorati complet de armata inamica
+	 */
+	public static boolean canIBeConquered(int myDefenders, int enemyAttackers) {
+		// Cati calareti imi va omori inamicul intr-un atac
+		double minDefendersDestroyed = getMinDefendersDestroyed(enemyAttackers);
+		
+		if(minDefendersDestroyed >= myDefenders)
+			return true;
+		
 		return false;
 	}
 	
@@ -149,6 +165,11 @@ public class AttackAnalyzer {
 		return ((int)Math.round(defendersDestroyed));
 	}
 	
+	/**
+	 * 
+	 * @param attackers
+	 * @return Numarul minim de inamici distrusi intr-un atac cu toti calaretii
+	 */
 	private static int getMinDefendersDestroyed(int attackers) {
 		double defendersDestroyed = (double) attackers * 0.504d;
 		

@@ -1,0 +1,66 @@
+Nume echipa: BitBusters
+-----------------------
+Serie = CC
+-----------------------
+Membrii echipa:
+1. Matesica Iulian-Razvan - 321CC (capitan)
+2. Popa Maria-Catalina - 321CC
+3. Birzu George - 321CC
+-----------------------
+Limbaj de programare folosit: Java
+-----------------------
+----------------------
+Detalii implementare
+--
+Pentru implementarea botului am folosit limbajul Java impreuna cu Bot Starterul
+de pe www.theaigames.com
+--
+Am incercat sa separam codul in cat mai multe clase fiecare cu rolul ei, ca sa 
+obtinem un cod usor de urmarit si de dezvoltat. 
+Am separat cele trei etape ale jocului: alegere teritorii start, plasare armate 
+si atac/transfer. 
+--
+In etapa de alegere a teritoriilor de start incepem prin calcularea numarului
+de wastelanduri pe fiecare super-regiune, apoi se obtnie o lista de regiuni, sortata
+crescator, criteriul de sortare fiind numarul de wastelanduri al super-regiunii
+din care face parte regiunea.
+
+Din aceasta lista, le alegem pe acele regiuni care fac parte dintr-o super-regiune
+cu numar maxim de armiesReward (bonus) - lista e sortata decrescator.
+Iar din aceasta lista o aleg pe aceea care are numar minim de regiun pe superregiune.
+
+Ideea e ca ne dorim sa cucerim cat mai repede o regiune cu numar maxim de bonus,
+fara wastelanduri.
+-- 
+In etapa de plasare armate, parcurgem lista cu regiunile care se afla pe bordura
+(acele regiuni de granita, ale noastre, care se invecineaza fie cu neutrals fie cu
+inamic), si plasam armata acolo unde raportul dintre armata noastra pe regiunie si 
+armata inamica de pe toate regiunile vecine e mai mic. 
+--
+Etapa de atac/transfer. Inainte de atacuri, de pe fiecare regiune de-a noastra,
+centrala (inconjurata numai de alte regiuni tot de ale noastre), cautam cu BFS
+drumul cel mai scurt catre o regiune de bordura si transferam treptat intreaga
+armata catre acea regiune care are nevoie de intariri.
+
+Dupa transferuri, au loc atacurile. Atacurile sunt impartite in atacuri de cucerire
+bonus (ataca acele regiuni neutre din aceasi super-regiune), atacuri de extindere
+si atac de cucerire.
+
+La atacul de extindere se calculeaza si se determina catre care super-regiune
+se merita sa ne extindem (in functie de deschiderea catre super-regiune si bonusul
+acordat dupa cucerire). 
+
+La atacul de bonus, cat si la cel de extindere se tine cont de prezenta inamicului
+din jurul regiunii de pe care se va executa atacul, iar daca in urma executarii 
+atacului, armata ramasa nu va mai face fata inamicului, atac-ul este anulat.
+
+La toate tipurile de atac se calculeaza numarul minim de armate ce trebuie mobilizate
+pentru ca atacul sa se execute cu succes. In cazul atacului de cucerire, daca
+la un moment dat o regiune se invecineaza numai o regiune inamica, atacul se realizeaza
+cu intreaga armata. 
+
+In cazul in care o regiune inamica e inconjurata de mine, dar totusi are destula
+armata incat eu sa nu o pot cucerii cu armata de pe o singura regiune, se calculeaza
+si se verifica daca atacul de cucerire va avea loc cu succes in urma unor atacuri
+succesive de pe fiecare regiune catre regiunea inamica.
+
