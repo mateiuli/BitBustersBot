@@ -49,7 +49,6 @@ public class BotStarter implements Bot
 	 * @return The list of PlaceArmiesMoves for one round
 	 */
 	public ArrayList<PlaceArmiesMove> getPlaceArmiesMoves(BotState state, Long timeOut) {
-		// debugPrint(state);
 		return (new ArmiesPlacer(state)).getPlaceArmiesMoves();
 	}
 
@@ -100,20 +99,20 @@ public class BotStarter implements Bot
 			System.err.println(r.getDebugInfo(state));
 		}		
 		
-//		System.out.println("\n[DEBUG] getShortesPatH(); \n");
-//		for(Region central : state.getStateAnalyzer().getMyCentralRegions()) {
-//			System.out.println("Regiune start: " + central.getId());
-//			System.out.println("Nod urmator imediat" + DistanceCalculator.nextRegionToBorder(central, state.getStateAnalyzer().getMyBorderRegions()).getId());
-//			
-//			
-//			List<Region> path = DistanceCalculator.getShortestPath(central, state.getStateAnalyzer().getMyBorderRegions());
-//			
-//			for(Region node : path) {
-//				System.out.print(node.getId() + " -> ");
-//			}
-//			
-//			System.out.println();
-//		}
+		System.out.println("\n[DEBUG] getShortesPatH(); \n");
+		for(Region central : state.getStateAnalyzer().getMyCentralRegions()) {
+			System.out.println("Regiune start: " + central.getId());
+			System.out.println("Nod urmator imediat" + DistanceCalculator.nextRegionToBorder(central, state.getStateAnalyzer().getMyBorderRegions()).getId());
+			
+			
+			List<Region> path = DistanceCalculator.getShortestPath(central, state.getStateAnalyzer().getMyBorderRegions());
+			
+			for(Region node : path) {
+				System.out.print(node.getId() + " -> ");
+			}
+			
+			System.out.println();
+		}
 		
 	}
 

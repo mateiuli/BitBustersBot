@@ -109,9 +109,7 @@ public class ArmiesPlacer {
 	 * Prioriati: sa ia bonus-ul (cucereste superregiunea);
 	 */
 	public void placeArmiesToExplore() {
-		// ## sa nu ma extind cu acele regiuni care au inamic langa?
-		//System.err.println("Place armies to EXPLORE");
-		//System.err.println("armiesLeft = " + armiesLeft);
+		// TODO: sa nu ma extind cu acele regiuni care au inamic langa?
 		if(armiesLeft <= 0)
 			return;
 		
@@ -122,30 +120,20 @@ public class ArmiesPlacer {
 			}			
 		});
 		
-		//System.err.println("My border regions with neutrals");
-		for(Region borderRegion : state.getStateAnalyzer().getMyBorderRegionsWithNeutrals()) {
-			//System.err.println(borderRegion.getDebugInfo(state));
-		}
-		
 		// Pun toate armatele disponibile
-		//while(armiesLeft > 0) {
-			for(Region region : state.getStateAnalyzer().getMyBorderRegionsWithNeutrals()) {
-				//System.err.println("armiesLeft = " + armiesLeft);
-				// TODO: From superregion?
-				int armiesToPlace = region.getNoOfNeutralArmies();
-				//System.err.println("armiesToPlace = " + armiesToPlace);
-				if(armiesToPlace > armiesLeft) 
-					armiesToPlace = armiesLeft;
-				
-				placeArmiesMoves.add(new PlaceArmiesMove(state.getMyPlayerName(), region, armiesToPlace));
-				armiesLeft -= armiesToPlace;
-				
-				if(armiesLeft == 0)
-					break;
-			}
-		//}
+		for(Region region : state.getStateAnalyzer().getMyBorderRegionsWithNeutrals()) {
+			//System.err.println("armiesLeft = " + armiesLeft);
+			// TODO: From superregion?
+			int armiesToPlace = region.getNoOfNeutralArmies();
+			if(armiesToPlace > armiesLeft) 
+				armiesToPlace = armiesLeft;
 			
-		//System.err.println("ARMATE NEPUSE: " + armiesLeft);
+			placeArmiesMoves.add(new PlaceArmiesMove(state.getMyPlayerName(), region, armiesToPlace));
+			armiesLeft -= armiesToPlace;
+			
+			if(armiesLeft == 0)
+				break;
+		}
 	}
 	
 	public boolean existsTransferTo(Region toRegion) {
@@ -185,45 +173,7 @@ public class ArmiesPlacer {
 			if(nextRegion.isOnBorder(state)) {	
 				// Avertizeaza regiunea urmatoare ca vor veni nu numar de calareti pe regiunea asta
 				nextRegion.addUpcomingArmiesOnTransfer(centralRegion.getArmies() - 1);
-			} // Verifica sa se faca clear pe upcomingArmies !!	
-		}
-	}
-	
-	public void computeFinalTransferMoves() {
-		// Transfer de pe regiuni de bordura cu mai multi vecini
-		// pe cele de pe bordura cu mai putini vecini
-		// ## transfer de pe bordurile cu mai putini vecini de-ai mei? wtf?
-		Collections.sort(state.getStateAnalyzer().getMyBorderRegionsWithNeutrals(), new Comparator<Region>() {
-			@Override
-			public int compare(Region o1, Region o2) {
-				return -(o1.getNoOfNeutralArmies() - o2.getNoOfNeutralArmies());
 			}
-		});
-		
-		for(Region borderRegion : state.getStateAnalyzer().getMyBorderRegionsWithNeutrals()) {
-			if(borderRegion.getArmies() < 2)
-				continue;
-			
-			if(existsTransferFrom(borderRegion))
-				continue;
-			
-			if(existsTransferTo(borderRegion))
-				continue;
-			
-			// Regiunea imediat urmatoare din drumul cel mai scurt catre o bordura
-			Region nextRegion = DistanceCalculator.nextRegionToBorder(borderRegion, state.getStateAnalyzer().getMyBorderRegionsWithNeutrals());
-			
-			if(nextRegion == null)
-				continue;
-			
-			// Adaugam miscarea de transfer
-			state.attackTransferMoves.add(new AttackTransferMove(state.getMyPlayerName(), borderRegion, nextRegion, borderRegion.getArmies() - 1));
-			
-			if(nextRegion.isOnBorder(state)) {	
-				// Avertizeaza regiunea urmatoare ca vor veni nu numar de calareti pe regiunea asta
-				nextRegion.addUpcomingArmiesOnTransfer(borderRegion.getArmies() - 1);
-			} // Verifica sa se faca clear pe upcomingArmies !!	
 		}
-	}
-	
+	}	
 }
